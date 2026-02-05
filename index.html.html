@@ -821,7 +821,7 @@
       
       cleaned = cleaned.replace(/[^\d.\-]/g, '');
       
-      // БАГ #2: Корректная обработка минуса
+      //  Корректная обработка минуса
       const hasLeadingMinus = cleaned.startsWith('-');
       cleaned = cleaned.replace(/-/g, '');
       if (hasLeadingMinus) {
@@ -837,7 +837,7 @@
       return cleaned;
     }
 
-    // БАГ #1 и #2: Исправленная функция parseUserNumber
+    //  Исправленная функция parseUserNumber
     function parseUserNumber(raw) {
       const cleaned = cleanInput(raw);
       if (!cleaned || cleaned === '-' || cleaned === '.') {
@@ -852,7 +852,7 @@
       return num;
     }
 
-    // БАГ #6: Безопасная работа с localStorage
+    //  Безопасная работа с localStorage
     function safeLocalStorageSet(key, value) {
       try {
         localStorage.setItem(key, value);
@@ -882,7 +882,7 @@
       }
     }
 
-    // БАГ #3: Централизованные утилиты
+    //  Централизованные утилиты
     function randomInRange(min, max, integer = true) {
       const val = Math.random() * (max - min) + min;
       return integer ? Math.round(val) : val;
@@ -895,7 +895,7 @@
       return Math.abs(x - rounded) < 1e-10;
     }
 
-    // БАГ #5: Улучшенная ensureNiceAnswer с fallback
+    //  Улучшенная ensureNiceAnswer с fallback
     function ensureNiceAnswer(generator, maxAttempts = 100) {
       for (let i = 0; i < maxAttempts; i++) {
         const task = generator();
@@ -912,7 +912,7 @@
       return fallbackTask;
     }
 
-    // БАГ #7: Функция сброса состояния подсказок
+    //  Функция сброса состояния подсказок
     function resetHintState() {
       if (!state.shownHints) state.shownHints = {};
       state.shownHints.theory = false;
@@ -3526,7 +3526,7 @@ const Generators = {
       );
     }
 
-    // Задачи с исправленным багом #7
+    // Задачи с исправленным багом 
     function newTask(key) {
       // Переключаемся в режим тренировки
       state.mode = "train";

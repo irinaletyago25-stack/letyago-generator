@@ -1,0 +1,3747 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тренажёр ЕГЭ 20</title>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --y-blue: #3F8AE0;
+      --y-bg: #F0F2F5;
+      --y-surface: #FFFFFF;
+      --y-white: #FFFFFF;
+      --y-surface-2: #F7F8FA;
+
+      --y-text: #21201F;
+      --y-gray: #7F7F7F;
+      --y-border: #DCE1E6;
+
+      --y-green: #22C55E;
+      --y-red: #EF4444;
+      --y-yellow: #FFE9A6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      background: var(--y-bg);
+      color: var(--y-text);
+      font-family: "YS Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 340px;
+      background: var(--y-white);
+      border-right: 1px solid var(--y-border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .logo span {
+      background: var(--y-yellow);
+      padding: 3px 10px;
+      border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+
+    .btn-random {
+      background: var(--y-surface-2);
+      border: 1px solid var(--y-border);
+      margin-bottom: 20px;
+      font-size: 14px;
+      text-align: center;
+      padding: 14px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 700;
+      color: var(--y-text);
+    }
+
+    .btn-random:hover {
+      background: #EBF3FB;
+      border-color: rgba(63,138,224,0.5);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(63,138,224,0.12);
+    }
+
+    .nav-item {
+      padding: 13px 18px;
+      margin-bottom: 8px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 13px;
+      border: 1px solid transparent;
+      line-height: 1.4;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-item:hover {
+      background: #F2F3F5;
+      transform: translateX(3px);
+    }
+
+    .nav-item.active {
+      background: #EBF3FB;
+      color: var(--y-blue);
+      border-color: rgba(63,138,224,0.35);
+      font-weight: 600;
+      box-shadow: 0 1px 6px rgba(63,138,224,0.10);
+    }
+
+    .accuracy-badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      background: #E8EEF5;
+      color: var(--y-blue);
+    }
+
+    .accuracy-badge.high {
+      background: #E8F5E9;
+      color: var(--y-green);
+    }
+
+    .accuracy-badge.medium {
+      background: #FEF3C7;
+      color: #D97706;
+    }
+
+    .accuracy-badge.low {
+      background: #FFEBEE;
+      color: var(--y-red);
+    }
+
+    .stats {
+      font-size: 11px;
+      color: var(--y-gray);
+      font-weight: 600;
+      margin-bottom: 12px;
+      padding: 14px;
+      background: #F9FAFB;
+      border-radius: 10px;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .stats-row:last-child { margin-bottom: 0; }
+
+    .stats-success { color: var(--y-green); font-weight: 700; }
+    .stats-error { color: var(--y-red); font-weight: 700; }
+
+    .btn-reset {
+      width: 100%;
+      padding: 10px;
+      background: var(--y-surface-2);
+      color: var(--y-red);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+
+    .btn-reset:hover {
+      background: #FFF1F2;
+      transform: translateY(-1px);
+    }
+
+    .footer-credit {
+      margin-top: auto;
+      padding-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--y-gray);
+      border-top: 1px solid var(--y-border);
+      line-height: 1.6;
+    }
+
+    .footer-credit a {
+      color: var(--y-blue);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(63, 138, 224, 0.3);
+      transition: all 0.2s;
+    }
+
+    .footer-credit a:hover {
+      border-bottom-color: var(--y-blue);
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--y-white);
+      margin: 12px;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      scroll-behavior: smooth;
+    }
+
+    .msg {
+      max-width: 85%;
+      animation: fadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .msg.ai { align-self: flex-start; }
+    .msg.user { align-self: flex-end; }
+
+    .bubble {
+      padding: 18px 24px;
+      border-radius: 20px;
+      background: var(--y-white);
+      border: 1px solid var(--y-border);
+      line-height: 1.7;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      font-size: 15px;
+    }
+
+    .user .bubble {
+      background: var(--y-surface-2);
+      border: 1px solid var(--y-border);
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    }
+
+    .task-card {
+      background: #ffffff;
+      border-radius: 12px;
+      border-left: 4px solid #0078d4;
+      padding: 18px;
+      margin: 12px 0;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .hint-card {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #d0d7de;
+      margin-top: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .hint-card.compact {
+      opacity: 0.6;
+      max-height: 45px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .hint-card.compact:hover {
+      opacity: 0.8;
+      transform: scale(1.01);
+    }
+
+    .hint-card.compact .hint-body { display: none; }
+
+    .hint-head {
+      padding: 10px 16px;
+      font-weight: 600;
+      font-size: 13px;
+      background: #f3f4f6;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .hint-body {
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hint-body b {
+      color: var(--y-text);
+      display: block;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #E8EEF5;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow-x: auto;
+      display: block;
+    }
+
+    .data-table table {
+      width: 100%;
+      min-width: 500px;
+    }
+
+    .data-table th {
+      background: #EEF5FF;
+      color: var(--y-blue);
+      padding: 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      border-bottom: 2px solid #D6E6FF;
+    }
+
+    .data-table td {
+      padding: 12px;
+      text-align: center;
+      border-top: 1px solid #E8EEF5;
+    }
+
+    .data-table tr:hover { background: #F9FAFB; }
+
+    .controls {
+      padding: 20px 8px;
+      border-top: 1px solid var(--y-border);
+      background: #FFFFFF;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .help-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .help-buttons .btn {
+      flex: 1;
+      min-width: 180px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      min-height: 48px;
+    }
+
+    .btn {
+      background: #0078d4;
+      color: #ffffff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      font-size: 15px;
+      font-family: inherit;
+      min-height: 48px;
+    }
+
+    .btn:focus {
+      outline: 2px solid var(--y-blue);
+      outline-offset: 2px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn-p {
+      background: var(--y-blue);
+      color: var(--y-white);
+      border: 1px solid var(--y-blue);
+      box-shadow: 0 6px 18px rgba(63, 138, 224, 0.22);
+    }
+
+    .btn-p:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-s {
+      background: #ffffff;
+      color: #0078d4;
+      border: 1px solid #0078d4;
+      width: 100%;
+      margin-bottom: 14px;
+    }
+
+    .btn-theory {
+      background: #ffffff;
+      color: #0078d4;
+      border: 1px solid #0078d4;
+    }
+
+    .btn-hint-smart {
+      background: #ffffff;
+      color: #0b8a3b;
+      border: 1px solid #0b8a3b;
+    }
+
+    .choice-panel {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .choice-btn {
+      flex: 1;
+      min-width: 200px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 2px solid var(--y-border);
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      text-align: center;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .choice-btn:focus {
+      outline: 2px solid var(--y-blue);
+      outline-offset: 2px;
+    }
+
+    .choice-btn:hover {
+      background: #F9FAFB;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .choice-btn.next {
+      border-color: var(--y-blue);
+      color: var(--y-white);
+      background: var(--y-blue);
+    }
+
+    .choice-btn.similar {
+      border-color: rgba(63, 138, 224, 0.35);
+      color: var(--y-blue);
+      background: var(--y-white);
+    }
+
+    .input-bar {
+      display: flex;
+      gap: 12px;
+      position: relative;
+    }
+
+    .input-bar input {
+      flex: 1;
+      padding: 15px 22px;
+      border: 2px solid var(--y-border);
+      border-radius: 16px;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .input-bar input:focus {
+      border-color: var(--y-blue);
+      box-shadow: 0 0 0 4px rgba(63, 138, 224, 0.1);
+    }
+
+    .input-bar input.invalid {
+      border-color: var(--y-red);
+      box-shadow: 0 0 0 4px rgba(255, 82, 82, 0.1);
+    }
+
+    .input-bar input.valid {
+      border-color: var(--y-green);
+      box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+    }
+
+    .input-bar input:disabled {
+      background: #f5f5f5;
+      color: #999;
+      cursor: not-allowed;
+      border-color: #e0e0e0;
+    }
+
+    .input-bar .btn-p:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .input-hint {
+      position: absolute;
+      bottom: -22px;
+      left: 0;
+      font-size: 11px;
+      color: var(--y-gray);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .input-bar input:focus ~ .input-hint {
+      opacity: 1;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.05); }
+    }
+
+    .pulse { animation: pulse 0.5s ease-in-out; }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--y-border);
+        max-height: 40vh;
+        overflow-y: auto;
+      }
+
+      .main {
+        margin: 0;
+        border-radius: 0;
+      }
+
+      .chat-area { padding: 20px 5px; }
+      .controls { padding: 15px 5px; }
+      .msg { max-width: 95%; }
+      .help-buttons { flex-direction: column; }
+      .choice-panel { flex-direction: column; }
+      .btn { min-height: 52px; font-size: 16px; }
+      .choice-btn { min-height: 52px; }
+      .data-table { font-size: 14px; }
+    }
+  
+.batch-box{margin-top:14px;padding:14px;border:1px solid var(--y-border);border-radius:14px;background:#F9FAFB;}
+.batch-title{font-weight:800;font-size:12px;letter-spacing:.2px;margin-bottom:10px;color:var(--y-text);}
+.batch-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.batch-radio{display:flex;gap:8px;align-items:center;font-size:12px;font-weight:600;color:#444;user-select:none;}
+.batch-label{font-size:12px;font-weight:700;color:#444;}
+.batch-input{width:90px;padding:8px 10px;border:2px solid var(--y-border);border-radius:12px;outline:none;font-size:13px;}
+.batch-input:focus{border-color:var(--y-blue);box-shadow:0 0 0 4px rgba(63,138,224,0.1);}
+.batch-select{flex:1;min-width:160px;padding:8px 10px;border:2px solid var(--y-border);border-radius:12px;outline:none;font-size:13px;background:#fff;}
+.batch-select:focus{border-color:var(--y-blue);box-shadow:0 0 0 4px rgba(63,138,224,0.1);}
+.batch-hint{margin-top:10px;font-size:11px;color:var(--y-gray);line-height:1.4;}
+
+    .notice {
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 15px;
+      line-height: 1.6;
+      border: 1px solid var(--y-border);
+      background: var(--y-surface);
+    }
+    .notice.ok {
+      border-color: rgba(34, 197, 94, .25);
+      background: #F3FBF6;
+    }
+    .notice.bad {
+      border-color: rgba(239, 68, 68, .25);
+      background: #FFF5F5;
+    }
+    .notice .title-ok { color: #1F7A3A; font-weight: 800; }
+    .notice .title-bad { color: #B42318; font-weight: 800; }
+    .notice .meta { font-size: 13px; color: #555; }
+
+    /* Стили для улучшенных подсказок */
+    .extended-hint {
+      background: #F9FAFB;
+      border-left: 4px solid var(--y-blue);
+      padding: 12px 16px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    
+    .hint-step {
+      margin: 8px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+    
+    .hint-step::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--y-blue);
+      font-weight: bold;
+    }
+    
+    .visual-scheme {
+      font-family: monospace;
+      background: #fff;
+      border: 1px solid #E8EEF5;
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 8px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    
+    .common-mistake {
+      background: #FFF5F5;
+      border-left: 3px solid var(--y-red);
+      padding: 10px 14px;
+      margin: 8px 0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .context-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #E8EEF5;
+      color: var(--y-blue);
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <span>20</span>
+      <div>Тренажёр базового ЕГЭ</div>
+    </div>
+
+    <div class="btn-random"
+         onclick="pickRandom()"
+         tabindex="0"
+         role="button"
+         aria-label="Случайная задача">
+      Случайная задача
+    </div>
+
+    <div class="batch-box">
+  <div class="batch-title">Генерация набора</div>
+  <div class="batch-row">
+    <label class="batch-radio"><input type="radio" name="mode" value="train" checked onchange="setMode('train')">Тренировка</label>
+    <label class="batch-radio"><input type="radio" name="mode" value="batch" onchange="setMode('batch')">Набор задач</label>
+  </div>
+  <div class="batch-row" style="margin-top:10px;">
+    <label class="batch-label" for="batchCount">Количество:</label>
+    <input id="batchCount" class="batch-input" type="number" min="1" max="50" value="10">
+  </div>
+  <div class="batch-row" style="margin-top:10px;">
+    <label class="batch-label" for="difficultySelect">Сложность:</label>
+    <select id="difficultySelect" class="batch-select" onchange="applySettingsFromUI()">
+      <option value="easy">Легко</option>
+      <option value="mid" selected>Средняя</option>
+      <option value="hard">Сложно</option>
+    </select>
+  </div>
+  <div class="batch-row" style="margin-top:10px;">
+    <label class="batch-label" for="subtypeSelect">Подтема:</label>
+    <select id="subtypeSelect" class="batch-select" onchange="applySettingsFromUI()">
+      <option value="" selected>Случайно</option>
+    </select>
+  </div>
+  <button class="btn btn-s" style="margin:12px 0 0 0;" onclick="generateBatchFromUI()">Сгенерировать</button>
+  <div class="batch-hint">Сначала выбери тему ниже, потом жми "Сгенерировать".</div>
+</div>
+
+<div id="category-list"></div>
+
+    <div class="stats" id="stats-panel">
+      <div class="stats-row">
+        <span>Решено верно</span>
+        <span class="stats-success">0</span>
+      </div>
+      <div class="stats-row">
+        <span>С ошибками</span>
+        <span class="stats-error">0</span>
+      </div>
+    </div>
+
+    <button class="btn-reset" onclick="resetStats()">Сбросить статистику</button>
+
+    <div class="footer-credit">
+      Автор: <a href="https://t.me/IrinaLetyago" target="_blank">IrinaLetyago</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="chat-area" id="chat">
+    </div>
+
+    <div class="controls">
+      <div class="help-buttons" id="help-buttons" style="display:none">
+        <button class="btn btn-theory"
+                onclick="showTheory()"
+                aria-label="Объясни теорию">
+          Объясни теорию
+        </button>
+        <button class="btn btn-hint-smart"
+                onclick="showSmartHint()"
+                aria-label="Подскажи решение">
+          Подскажи решение
+        </button>
+        <button class="btn btn-hint-smart"
+                id="extended-hint-btn"
+                onclick="showExtendedHint()"
+                aria-label="Расширенная подсказка">
+          Расширенная подсказка
+        </button>
+      </div>
+
+      <button class="btn btn-s"
+              id="hint-btn"
+              onclick="showHint()"
+              style="display:none"
+              aria-label="Показать подсказку">
+        Показать подсказку
+      </button>
+
+      <button class="btn btn-s"
+              id="reveal-btn"
+              onclick="revealAnswer()"
+              style="display:none"
+              aria-label="Показать правильный ответ">
+        Показать ответ
+      </button>
+
+      <div id="choice-area" style="display:none"></div>
+
+      <div class="input-bar">
+        <input type="text"
+               id="inp"
+               placeholder="12, 3.5 или 1/2"
+               autocomplete="off"
+               aria-label="Ответ">
+        <span class="input-hint">Можно вводить дроби: 1/2, 3/4 и т.п.</span>
+        <button class="btn btn-p"
+                onclick="sendAnswer()"
+                aria-label="Отправить ответ">
+          Отправить
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /*
+      Расширенная версия с новыми жизненными контекстами и улучшенными подсказками
+      Добавлено:
+      1. Новые генераторы задач (mixCoffee, lineBus, circleStadium, waterFloating, workCleaning, progDeposit)
+      2. Улучшенные подсказки с визуальными схемами
+      3. Расширенная теория с примерами
+      4. Контекстные подсказки для каждого типа задач
+    */
+
+    // ============ ИСПРАВЛЕННЫЕ УТИЛИТЫ ============
+    
+    // БАГ #1 и #2: Исправленная функция cleanInput
+    function cleanInput(input) {
+      if (!input) return '';
+      
+      let cleaned = String(input).replace(/,/g, '.');
+      
+      // Обработка дробей
+      if (cleaned.includes('/')) {
+        const parts = cleaned.split('/');
+        if (parts.length === 2) {
+          const numerator = parseFloat(parts[0]);
+          const denominator = parseFloat(parts[1]);
+          if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+            return String(numerator / denominator);
+          }
+        }
+      }
+      
+      cleaned = cleaned.replace(/[^\d.\-]/g, '');
+      
+      // БАГ #2: Корректная обработка минуса
+      const hasLeadingMinus = cleaned.startsWith('-');
+      cleaned = cleaned.replace(/-/g, '');
+      if (hasLeadingMinus) {
+        cleaned = '-' + cleaned;
+      }
+      
+      const dotIndex = cleaned.indexOf('.');
+      if (dotIndex !== -1) {
+        cleaned = cleaned.substring(0, dotIndex + 1) + 
+                  cleaned.substring(dotIndex + 1).replace(/\./g, '');
+      }
+      
+      return cleaned;
+    }
+
+    // БАГ #1 и #2: Исправленная функция parseUserNumber
+    function parseUserNumber(raw) {
+      const cleaned = cleanInput(raw);
+      if (!cleaned || cleaned === '-' || cleaned === '.') {
+        return NaN;
+      }
+      
+      const num = parseFloat(cleaned);
+      if (isNaN(num) || !isFinite(num)) {
+        return NaN;
+      }
+      
+      return num;
+    }
+
+    // БАГ #6: Безопасная работа с localStorage
+    function safeLocalStorageSet(key, value) {
+      try {
+        localStorage.setItem(key, value);
+        return true;
+      } catch (e) {
+        console.warn('localStorage недоступен:', e);
+        return false;
+      }
+    }
+
+    function safeLocalStorageGet(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch (e) {
+        console.warn('localStorage недоступен:', e);
+        return null;
+      }
+    }
+
+    function safeLocalStorageRemove(key) {
+      try {
+        localStorage.removeItem(key);
+        return true;
+      } catch (e) {
+        console.warn('localStorage недоступен:', e);
+        return false;
+      }
+    }
+
+    // БАГ #3: Централизованные утилиты
+    function randomInRange(min, max, integer = true) {
+      const val = Math.random() * (max - min) + min;
+      return integer ? Math.round(val) : val;
+    }
+
+    function isNiceNumber(x) {
+      if (typeof x !== 'number' || !isFinite(x)) return false;
+      if (Math.abs(x - Math.round(x)) < 1e-10) return true;
+      const rounded = Math.round(x * 100) / 100;
+      return Math.abs(x - rounded) < 1e-10;
+    }
+
+    // БАГ #5: Улучшенная ensureNiceAnswer с fallback
+    function ensureNiceAnswer(generator, maxAttempts = 100) {
+      for (let i = 0; i < maxAttempts; i++) {
+        const task = generator();
+        if (task && isNiceNumber(task.ans)) {
+          return task;
+        }
+      }
+      
+      console.warn('Не удалось сгенерировать "красивый" ответ за', maxAttempts, 'попыток');
+      const fallbackTask = generator();
+      if (fallbackTask) {
+        fallbackTask.ans = Math.round(fallbackTask.ans * 100) / 100;
+      }
+      return fallbackTask;
+    }
+
+    // БАГ #7: Функция сброса состояния подсказок
+    function resetHintState() {
+      if (!state.shownHints) state.shownHints = {};
+      state.shownHints.theory = false;
+      state.shownHints.smart = false;
+      state.shownHints.extended = false;
+      
+      const extBtn = document.getElementById('extended-hint-btn');
+      if (extBtn) {
+        extBtn.classList.remove('used');
+        extBtn.style.pointerEvents = 'auto';
+        extBtn.style.opacity = '1';
+      }
+    }
+
+    // Существующие утилиты (оставляем для совместимости)
+    const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const pick = (arr) => arr[rand(0, arr.length - 1)];
+
+    // Форматирование ответа: без лишних знаков, по возможности "красивое" число
+    const NICE_DENOMS = [1,2,4,5,8,10,16,20,25,40,50,80,100];
+    function isNiceAnswerValue(x){
+      if(!Number.isFinite(x)) return false;
+      // целое
+      if(Math.abs(x - Math.round(x)) < 1e-10) return true;
+      // дробь с конечной десятичной записью (делители 2^a*5^b)
+      for(const d of NICE_DENOMS){
+        const k = x * d;
+        if(Math.abs(k - Math.round(k)) < 1e-10) return true;
+      }
+      // крайний случай: до 2 знаков после запятой (напр. 0.33, 12.75)
+      const x100 = Math.round(x*100)/100;
+      return Math.abs(x - x100) < 1e-10;
+    }
+    function formatAns(x){
+      if(!Number.isFinite(x)) return String(x);
+      const r = Math.round(x);
+      if(Math.abs(x - r) < 1e-10) return String(r);
+      // до 2 знаков, убрать хвостовые нули
+      let s = (Math.round(x*100)/100).toFixed(2);
+      s = s.replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
+      return s;
+    }
+
+    function declension(number, forms) {
+      const n = Math.abs(number) % 100;
+      const n1 = n % 10;
+      if (n > 10 && n < 20) return forms[2];
+      if (n1 > 1 && n1 < 5) return forms[1];
+      if (n1 === 1) return forms[0];
+      return forms[2];
+    }
+
+    function literText(num)   { return declension(num, ['литр', 'литра', 'литров']); }
+    function hourText(num)    { return declension(num, ['час', 'часа', 'часов']); }
+    function dayText(num)     { return declension(num, ['день', 'дня', 'дней']); }
+    function kmText(num)      { return declension(num, ['километр', 'километра', 'километров']); }
+    function meterText(num)   { return declension(num, ['метр', 'метра', 'метров']); }
+    function rubleText(num)   { return declension(num, ['рубль', 'рубля', 'рублей']); }
+    function percentText(num) { return declension(num, ['процент', 'процента', 'процентов']); }
+    function monthText(num)   { return declension(num, ['месяц', 'месяца', 'месяцев']); }
+    function gramText(num)    { return declension(num, ['грамм', 'грамма', 'грамм']); }
+
+    function getTopicTitle(key){
+      return (fipi.find(x=>x.k===key)||{}).t || key;
+    }
+
+    function showTheory(){
+      const key = state.currentKey;
+      const t = THEORY[key];
+      
+      if(!t){ 
+        // Если нет теории для этой темы, покажем общую теорию по типу задач
+        const generalTheory = {
+          mix: {
+            title: 'Общая теория: Смеси и растворы',
+            content: `
+              <h3>Основная идея</h3>
+              <p>При смешивании растворов масса вещества сохраняется.</p>
+              <p><b>Формула:</b> c = (m₁·c₁ + m₂·c₂) / (m₁ + m₂)</p>
+              <p>где m — масса раствора, c — концентрация в долях.</p>
+              <h3>Алгоритм решения:</h3>
+              <ol>
+                <li>Перевести проценты в доли (разделить на 100)</li>
+                <li>Найти массу вещества в каждом растворе</li>
+                <li>Сложить массы вещества и массы растворов</li>
+                <li>Найти новую концентрацию</li>
+                <li>Перевести обратно в проценты (умножить на 100)</li>
+              </ol>
+            `
+          },
+          line: {
+            title: 'Общая теория: Движение по прямой',
+            content: `
+              <h3>Основные формулы</h3>
+              <p><b>Путь:</b> S = v × t</p>
+              <p><b>Средняя скорость:</b> v_ср = S_общ / t_общ</p>
+              <p><b>Встречное движение:</b> v_отн = v₁ + v₂</p>
+              <p><b>Догонялки:</b> v_отн = |v₁ - v₂|</p>
+            `
+          },
+          circle: {
+            title: 'Общая теория: Движение по кругу',
+            content: `
+              <h3>Основные формулы</h3>
+              <p><b>Встречное движение:</b> v_отн = v₁ + v₂, t = L / v_отн</p>
+              <p><b>Движение в одном направлении:</b> v_отн = |v₁ - v₂|, t = L / v_отн</p>
+              <p>где L — длина круговой трассы.</p>
+            `
+          },
+          water: {
+            title: 'Общая теория: Движение по реке',
+            content: `
+              <h3>Основные формулы</h3>
+              <p><b>По течению:</b> v = v_собств + v_теч</p>
+              <p><b>Против течения:</b> v = v_собств - v_теч</p>
+              <p><b>Плот (без мотора):</b> v = v_теч</p>
+            `
+          },
+          work: {
+            title: 'Общая теория: Работа и производительность',
+            content: `
+              <h3>Основные формулы</h3>
+              <p>Всю работу примем за 1</p>
+              <p><b>Производительность:</b> p = 1 / t</p>
+              <p><b>Совместная работа:</b> p_совм = p₁ + p₂ + ...</p>
+              <p><b>Время совместной работы:</b> t_совм = 1 / p_совм</p>
+            `
+          },
+          prog: {
+            title: 'Общая теория: Прогрессии',
+            content: `
+              <h3>Основные формулы</h3>
+              <p><b>Арифметическая прогрессия:</b></p>
+              <p>aₙ = a₁ + (n-1)·d</p>
+              <p>Sₙ = (a₁ + aₙ)·n / 2</p>
+              <p><b>Геометрическая прогрессия:</b></p>
+              <p>bₙ = b₁·qⁿ⁻¹</p>
+              <p>Sₙ = b₁·(qⁿ - 1) / (q - 1) при q ≠ 1</p>
+            `
+          }
+        };
+        
+        const fallback = generalTheory[key] || {
+          title: `Теория: ${getTopicTitle(key)}`,
+          content: `<p>Теория для этой темы будет добавлена в ближайшее время.</p><p>Пока используйте подсказки к задачам.</p>`
+        };
+        
+        addBubble(`<div class="hint-card"><div style="font-weight:800;margin-bottom:8px;">📚 ${fallback.title}</div>${fallback.content}</div>`, 'ai');
+      } else {
+        addBubble(`<div class="hint-card"><div style="font-weight:800;margin-bottom:8px;">📚 Теория: ${t.title}</div>${t.content}</div>`, 'ai');
+      }
+      
+      state.shownHints.theory = true;
+    }
+
+    const HINT_SHORT = {
+      mix: "Переведи проценты в массу вещества: mвещества = m·c/100. Складывай массы вещества и дели на общую массу, затем умножай на 100% для концентрации.",
+      line: "Запиши S = v·t. При движении навстречу складывай скорости, при движении в одном направлении используй разность скоростей.",
+      circle: "Для движения по кругу используй длину круга L и относительную скорость. Время до встречи или обгона: t = L / (v₁+v₂) или t = L / |v₁−v₂|.",
+      water: "По течению лодка плывёт быстрее: v = vлодки + vтечения; против течения — медленнее: v = vлодки − vтечения. Время = путь / скорость.",
+      work: "Производительность — это часть работы за единицу времени: 1/t. При совместной работе производительности складываются, затем по 1/t находят t.",
+      prog: "Сначала найди n‑й член: aₙ = a₁ + (n−1)d, затем сумму: Sₙ = (a₁ + aₙ)n/2. Следи, чтобы не перепутать aₙ и Sₙ."
+    };
+
+    function showSmartHint() {
+      if (!state.task) {
+        addBubble("Сначала сгенерируй задачу.", "ai");
+        return;
+      }
+
+      // Если уже все шаги показаны, даём мягкий сигнал
+      if (state.stepIdx >= (state.task.steps?.length || 0)) {
+        addBubble(
+          "<div class=\"hint-card\">" +
+          "<div class=\"hint-head\">Все шаги показаны</div>" +
+          "<div class=\"hint-body\">Можешь выбрать похожую или новую задачу.</div>" +
+          "</div>",
+          "ai"
+        );
+        return;
+      }
+
+      const currentType = state.currentKey;
+
+      // 1) Если у тебя есть EXTENDED_HINTS / getExtendedHint — можно сначала попытаться взять оттуда
+      const subtype = state.task?.subtype;
+      const extended = typeof getExtendedHint === "function" ? getExtendedHint(currentType, subtype) : null;
+      
+      if (extended && extended.basic) {
+        let content = `<div class="hint-card"><div style="font-weight:800;margin-bottom:8px;">Подсказка по плану решения</div>`;
+        content += `<div class="extended-hint">${extended.basic}</div>`;
+        content += `</div>`;
+        addBubble(content, 'ai');
+        state.shownHints.smart = true;
+        return;
+      }
+
+      let hintText = HINT_SHORT[currentType];
+
+      if (!hintText) {
+        addBubble(
+          "<div class=\"hint-card\">" +
+          "<div class=\"hint-head\">Подсказка недоступна</div>" +
+          "<div class=\"hint-body\">Для этой темы нет готовой умной подсказки.</div>" +
+          "</div>",
+          "ai"
+        );
+        return;
+      }
+
+      addBubble(
+        "<div style=\"background: linear-gradient(135deg, #F1F8E9 0, #FFFFFF 100); padding: 18px; border-radius: 14px; border: 2px solid #4CAF50;\">" +
+          "<h3 style=\"color: #4CAF50; margin-top: 0; margin-bottom: 12px; font-size: 16px;\">Как решать такие задачи</h3>" +
+          "<p style=\"margin-bottom: 12px; font-size: 15px; line-height: 1.6;\">" + hintText + "</p>" +
+          "<p style=\"margin-top: 14px; margin-bottom: 0; font-size: 13px; color: #777;\">" +
+            "<b>Подсказка:</b> попробуй сначала составить краткую запись или таблицу." +
+          "</p>" +
+        "</div>",
+        "ai"
+      );
+      state.shownHints.smart = true;
+    }
+
+    function showExtendedHint() {
+      // БАГ #7: Проверка, не показывалась ли уже подсказка
+      if (state.shownHints && state.shownHints.extended) {
+        addBubble('Расширенная подсказка уже показана выше! 📖', 'ai');
+        return;
+      }
+      
+      if (state.shownHints) {
+        state.shownHints.extended = true;
+      }
+      
+      const btn = document.getElementById('extended-hint-btn');
+      if (btn) {
+        btn.classList.add('used');
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.5';
+      }
+      
+      const key = state.currentKey;
+      const subtype = state.task?.subtype || '';
+      const hint = getExtendedHint(key, subtype);
+      
+      // Если нет конкретной подсказки, создадим общую
+      if (!hint) {
+        const generalHints = {
+          mix: {
+            context: "Смеси и растворы",
+            basic: "В задачах на смеси масса вещества сохраняется. Всегда находи массу вещества в каждом компоненте, суммируй, затем находи новую концентрацию.",
+            steps: [
+              "Определи, что является 'веществом' (соль, кофеин, сахар)",
+              "Найди массу вещества в каждом компоненте: m = V × c",
+              "Суммируй массы вещества и объёмы компонентов",
+              "Найди концентрацию: c = m_вещества / V_общий × 100%"
+            ],
+            visual: `Пример:\nРаствор 1: V₁ = 10 л, c₁ = 20% → m₁ = 10 × 0.2 = 2\nРаствор 2: V₂ = 5 л, c₂ = 40% → m₂ = 5 × 0.4 = 2\nСмесь: V = 15 л, m = 4, c = 4/15 × 100% ≈ 26.7%`,
+            commonMistakes: [
+              "Сложение процентов напрямую (20% + 40% ≠ 60%)",
+              "Забыть перевести проценты в доли",
+              "Перепутать массу вещества и массу раствора"
+            ]
+          },
+          line: {
+            context: "Движение по прямой",
+            basic: "Основная формула: S = v × t. В задачах на встречу складывай скорости, в задачах на догонялки — вычитай.",
+            steps: [
+              "Нарисуй схему движения",
+              "Определи тип задачи (встреча, догонялки, средняя скорость)",
+              "Вырази все величины через S = vt",
+              "Составь уравнение и реши"
+            ],
+            visual: `Пример встречи:\nS = 100 км, v₁ = 60 км/ч, v₂ = 40 км/ч\nt = S / (v₁ + v₂) = 100 / 100 = 1 ч`,
+            commonMistakes: [
+              "Использовать неверную относительную скорость",
+              "Не перевести единицы измерения",
+              "Перепутать время и скорость"
+            ]
+          },
+          circle: {
+            context: "Движение по кругу",
+            basic: "При движении в одном направлении относительная скорость равна разности скоростей, при встречном — сумме. Путь до встречи равен длине круга.",
+            steps: [
+              "Определи направление движения",
+              "Найди относительную скорость: v_отн = |v₁ ± v₂|",
+              "Путь до встречи = длина круга L",
+              "Время: t = L / v_отн"
+            ],
+            commonMistakes: [
+              "Путать сложение и вычитание скоростей",
+              "Забыть, что путь равен длине круга",
+              "Не согласовать единицы измерения"
+            ]
+          },
+          water: {
+            context: "Движение по реке",
+            basic: "Скорость по течению: v + u, против течения: v - u. Плот движется со скоростью течения.",
+            steps: [
+              "Определи собственную скорость и скорость течения",
+              "Найди скорости по течению и против",
+              "Составь уравнение на основе времени или пути",
+              "Реши уравнение"
+            ],
+            commonMistakes: [
+              "Забыть про скорость течения",
+              "Неправильно сложить/вычесть скорости",
+              "Не учесть, что плот не имеет собственной скорости"
+            ]
+          },
+          work: {
+            context: "Работа и производительность",
+            basic: "Всю работу прими за 1. Производительность = 1/время. Совместная работа: сложение производительностей.",
+            steps: [
+              "Найди производительности: p = 1/t",
+              "Сложи производительности для совместной работы",
+              "Общее время: T = 1/Σp",
+              "Учти, если работают не одновременно"
+            ],
+            commonMistakes: [
+              "Складывать времена вместо производительностей",
+              "Забыть принять работу за 1",
+              "Не учесть последовательную работу"
+            ]
+          },
+          prog: {
+            context: "Прогрессии",
+            basic: "Арифметическая: a_n = a₁ + (n-1)d, S_n = n(a₁ + a_n)/2. Геометрическая: b_n = b₁·qⁿ⁻¹.",
+            steps: [
+              "Определи тип прогрессии",
+              "Выпиши известные величины",
+              "Выбери подходящую формулу",
+              "Подставь и реши"
+            ],
+            commonMistakes: [
+              "Путать формулы разных прогрессий",
+              "Ошибка в определении номера члена",
+              "Неправильно найти разность/знаменатель"
+            ]
+          }
+        };
+        
+        const generalHint = generalHints[key];
+        if (generalHint) {
+          showGeneralExtendedHint(generalHint);
+        } else {
+          addBubble('Для этой задачи пока нет расширенной подсказки. Используйте обычную подсказку или теорию.', 'ai');
+        }
+        return;
+      }
+      
+      let content = `<div class="hint-card">
+        <div style="font-weight:800;margin-bottom:8px;">Расширенная подсказка</div>
+        <div class="context-badge">${hint.context || 'Общий подход'}</div>`;
+      
+      if (hint.visual) {
+        content += `<div class="visual-scheme">${hint.visual}</div>`;
+      }
+      
+      if (hint.steps && hint.steps.length > 0) {
+        content += `<div style="margin-top:12px;"><b>Пошаговый план:</b></div>`;
+        hint.steps.forEach((step, i) => {
+          content += `<div class="hint-step">${step}</div>`;
+        });
+      }
+      
+      if (hint.commonMistakes && hint.commonMistakes.length > 0) {
+        content += `<div style="margin-top:12px;"><b>Типовые ошибки:</b></div>`;
+        hint.commonMistakes.forEach((mistake, i) => {
+          content += `<div class="common-mistake">${i+1}. ${mistake}</div>`;
+        });
+      }
+      
+      content += `</div>`;
+      addBubble(content, 'ai');
+    }
+
+    function showGeneralExtendedHint(hint) {
+      let content = `<div class="hint-card">
+        <div style="font-weight:800;margin-bottom:8px;">Общая подсказка: ${hint.context}</div>
+        <div class="context-badge">Общий подход</div>`;
+      
+      if (hint.visual) {
+        content += `<div class="visual-scheme">${hint.visual}</div>`;
+      }
+      
+      content += `<div class="extended-hint">${hint.basic}</div>`;
+      
+      if (hint.steps && hint.steps.length > 0) {
+        content += `<div style="margin-top:12px;"><b>Общий алгоритм:</b></div>`;
+        hint.steps.forEach((step, i) => {
+          content += `<div class="hint-step">${step}</div>`;
+        });
+      }
+      
+      if (hint.commonMistakes && hint.commonMistakes.length > 0) {
+        content += `<div style="margin-top:12px;"><b>Частые ошибки:</b></div>`;
+        hint.commonMistakes.forEach((mistake, i) => {
+          content += `<div class="common-mistake">${i+1}. ${mistake}</div>`;
+        });
+      }
+      
+      content += `</div>`;
+      addBubble(content, 'ai');
+    }
+
+    function showHint() {
+      if (!state.task || !state.task.steps || state.task.steps.length === 0) {
+        addBubble(
+          "<div class=\"hint-card\">" +
+          "<div class=\"hint-head\">Решение недоступно</div>" +
+          "<div class=\"hint-body\">Для этой задачи нет пошагового решения.</div>" +
+          "</div>",
+          "ai"
+        );
+        return;
+      }
+
+      if (state.stepIdx >= state.task.steps.length) {
+        addBubble(
+          "<div class=\"hint-card\">" +
+          "<div class=\"hint-head\">Все шаги показаны</div>" +
+          "<div class=\"hint-body\">Можешь выбрать похожую или новую задачу.</div>" +
+          "</div>",
+          "ai"
+        );
+        return;
+      }
+
+      const s = state.task.steps[state.stepIdx];
+
+      addBubble(
+        "<div class=\"hint-card\">" +
+          "<div class=\"hint-head\">" + s.h + "</div>" +
+          "<div class=\"hint-body\">" + s.m + "</div>" +
+        "</div>",
+        "ai"
+      );
+
+      state.stepIdx++;
+
+      const hBtn = document.getElementById("hint-btn");
+      if (!hBtn) return;
+
+      if (state.stepIdx >= state.task.steps.length) {
+        hBtn.style.display = "none";
+        showChoicePanel();
+      } else {
+        hBtn.innerText = (state.stepIdx + 1) + " / " + state.task.steps.length;
+      }
+    }
+
+    function revealAnswer(){
+      if(!state.task){ 
+        addBubble('<b>Сначала нужно сгенерировать задачу.</b>','ai');
+        return; 
+      }
+      
+      let ans = state.task.ans;
+
+      // Жёсткая нормализация: приводим к числу, если вдруг строка
+      ans = Number(ans);
+
+      // Если получилось что-то нечисловое, тихо исправляем на 0
+      if (!isFinite(ans)) {
+        console.error("Некорректный ans, принудительная нормализация:", state.task.ans);
+        ans = 0;
+      }
+
+      // Сохраняем нормализованный ответ обратно в задачу
+      state.task.ans = ans;
+      
+      addBubble("<b>Правильный ответ: " + ans + "</b>", "ai");
+    }
+
+    function pickRandom(){
+      state.mode = "train";
+      toggleInputByMode();
+
+      const key = pick(fipi).k;
+      setActiveTopic(key);
+      newTask(key);
+    }
+
+    function setActiveTopic(key){
+      document.querySelectorAll('.nav-item').forEach(el=>{
+        el.classList.toggle('active', el.dataset.key===key);
+      });
+    }
+
+    function sendAnswer() {
+      // Блокируем отправку ответа в режиме набора задач
+      if (state.mode === "batch") {
+        addBubble(
+          "<div class=\"hint-card\">" +
+          "<div class=\"hint-head\">Режим набора задач</div>" +
+          "<div class=\"hint-body\">" +
+          "Сейчас включён режим набора задач. В этом режиме ответы не вводятся.<br><br>" +
+          "Переключитесь в режим тренировки, чтобы решать задачи по одной." +
+          "</div></div>",
+          "ai"
+        );
+        return;
+      }
+      
+      const inp = document.getElementById("inp");
+      const cleaned = cleanInput(inp.value);
+      const val = parseFloat(cleaned);
+
+      // 1. Проверяем, что ввели число
+      if (isNaN(val)) {
+        inp.value = inp.value.trim();
+        inp.classList.add("pulse");
+        setTimeout(() => inp.classList.remove("pulse"), 500);
+        return;
+      }
+
+      // 2. Показываем сообщение пользователя
+      addBubble(inp.value, "user");
+      inp.value = "";
+      inp.classList.remove("invalid", "valid");
+
+      if (!state.task) {
+        return;
+      }
+
+      // 3. Нормализуем ans перед проверкой
+      let ans = state.task.ans;
+      ans = Number(ans);
+      if (!isFinite(ans)) {
+        console.error("Некорректный ans при проверке, нормализуем:", state.task.ans);
+        ans = 0;
+        state.task.ans = ans;
+      }
+
+      // 4. Проверяем ответ с небольшим допуском
+      const correct = Math.abs(val - ans) <= 0.01;
+      
+      if (correct) {
+        // Верный ответ
+        state.ok++;
+        if (!state.topicStats[state.currentKey]) {
+          state.topicStats[state.currentKey] = { ok: 0, err: 0 };
+        }
+        state.topicStats[state.currentKey].ok++;
+        saveStats();
+
+        const msg = pick(successMessages) || "Верный ответ.";
+        addBubble(
+          msg + "<br><br><b>Правильный ответ: " + state.task.ans + "</b>",
+          "ai"
+        );
+
+        // После верного ответа показываем панели выбора следующей задачи
+        setTimeout(showChoicePanel, 500);
+      } else {
+        // Неверный ответ
+        state.err++;
+        if (!state.topicStats[state.currentKey]) {
+          state.topicStats[state.currentKey] = { ok: 0, err: 0 };
+        }
+        state.topicStats[state.currentKey].err++;
+        saveStats();
+        if (typeof updateAccuracyBadges === "function") {
+          updateAccuracyBadges();
+        }
+
+        const topicErrors = errorMessages[state.currentKey] || errorMessages.mix;
+        const errorMsg = pick(topicErrors) || "Ответ не совпадает с правильным.";
+
+        addBubble(
+          "<b>" + errorMsg + "</b><br><br>" +
+          "<b>Правильный ответ: " + state.task.ans + "</b><br><br>" +
+          "<span>Если хочешь, можно посмотреть подсказки или решение.</span>",
+          "ai"
+        );
+
+        // Сбрасываем шаг подсказок
+        state.stepIdx = 0;
+
+        // Показываем блок кнопок помощи и кнопку «Показать подсказку»
+        const hBtn = document.getElementById("hint-btn");
+        if (state.task.steps && state.task.steps.length > 0) {
+          hBtn.style.display = "block";
+          hBtn.innerText = (state.stepIdx + 1) + " / " + state.task.steps.length;
+        }
+
+        const helpBlock = document.getElementById("help-buttons");
+        if (helpBlock) {
+          helpBlock.style.display = "flex";
+        }
+      }
+    }
+
+    // Расширенные подсказки для каждого типа и подтипа
+    const EXTENDED_HINTS = {
+      mix: {
+        mixconcentration: {
+          context: "Смешивание растворов",
+          basic: "При смешивании растворов масса вещества сохраняется. Сложи массы вещества из каждого раствора и раздели на общий объём.",
+          steps: [
+            "Переведи проценты в доли (раздели на 100)",
+            "Найди массу вещества в каждом растворе: m = V × c",
+            "Сложи массы вещества и объёмы растворов",
+            "Найди концентрацию: c = (m₁ + m₂) / (V₁ + V₂) × 100%"
+          ],
+          visual: `Раствор 1: ${rand(5, 20)} л, ${rand(10, 30)}%  → m₁ = V₁ × c₁
+Раствор 2: ${rand(5, 20)} л, ${rand(10, 30)}%  → m₂ = V₂ × c₂
+Смесь: V = V₁ + V₂, m = m₁ + m₂, c = m/V × 100%`,
+          commonMistakes: [
+            "Забыть перевести проценты в доли",
+            "Сложить проценты вместо масс вещества",
+            "Перепутать массу вещества и массу раствора"
+          ]
+        },
+        mixCoffee: {
+          context: "Смешивание кофе",
+          basic: "Кофеин сохраняется при смешивании сортов кофе. Найди массу кофеина в каждом сорте и раздели на общую массу смеси.",
+          steps: [
+            "Найди массу кофеина в сорте А: m₁ = масса × процент/100",
+            "Найди массу кофеина в сорте В: m₂ = масса × процент/100",
+            "Сложи массы кофеина и массы кофе",
+            "Найди концентрацию: c = (m₁ + m₂) / (M₁ + M₂) × 100%"
+          ],
+          visual: `Сорт А: ${rand(100, 500)} г, ${rand(2, 10)}% кофеина
+Сорт В: ${rand(100, 500)} г, ${rand(2, 10)}% кофеина
+Масса кофеина сохраняется!`,
+          commonMistakes: [
+            "Сложить проценты напрямую",
+            "Забыть, что масса кофеина сохраняется",
+            "Перепутать массу кофе и массу кофеина"
+          ]
+        }
+      },
+      line: {
+        linecity: {
+          context: "Дорога в город",
+          basic: "Разбей путь на участки с разной скоростью. Найди путь на каждом участке через S = v × t.",
+          steps: [
+            "Переведи минуты в часы (раздели на 60)",
+            "Найди путь пешком: S₁ = v₁ × t₁",
+            "Найди путь на транспорте: S₂ = v₂ × t₂",
+            "Сложи полученные расстояния"
+          ],
+          visual: `Дом → Остановка: v = ${rand(4, 6)} км/ч, t = ${rand(10, 30)} мин
+Остановка → Школа: v = ${rand(30, 50)} км/ч, t = ${rand(20, 40)} мин
+Общий путь: S = S₁ + S₂`,
+          commonMistakes: [
+            "Не перевести минуты в часы",
+            "Сложить скорости вместо путей",
+            "Перепутать время движения и время ожидания"
+          ]
+        },
+        lineBus: {
+          context: "Автобус с остановками",
+          basic: "Средняя скорость = общий путь / общее время (включая остановки). Найди время движения и время остановок отдельно.",
+          steps: [
+            "Найди время движения без остановок: t₁ = S / v",
+            "Найди общее время остановок: t₂ = количество × время_одной",
+            "Сложи времена: T = t₁ + t₂",
+            "Найди среднюю скорость: v_ср = S / T"
+          ],
+          visual: `Путь: ${rand(20, 60)} км
+Скорость без остановок: ${rand(40, 70)} км/ч
+Остановки: ${rand(2, 6)} по ${rand(1, 5)} мин
+Общее время = время_движения + время_остановок`,
+          commonMistakes: [
+            "Не учесть время остановок",
+            "Сложить скорость и время остановок",
+            "Перевести минуты в часы с ошибкой"
+          ]
+        }
+      },
+      circle: {
+        circleStadium: {
+          context: "Бег по стадиону",
+          basic: "При движении в одном направлении быстрый бегун догоняет медленного, когда пробегает на круг больше.",
+          steps: [
+            "Найди относительную скорость: v = |v₁ - v₂|",
+            "Путь до встречи равен длине круга L",
+            "Время встречи: t = L / v",
+            "Проверь, что скорости разные"
+          ],
+          visual: `Стадион: L = ${rand(400, 800)} м
+Бегун А: ${rand(5, 8)} м/с → 
+Бегун Б: ${rand(4, 7)} м/с →
+Разность скоростей = |v₁ - v₂|`,
+          commonMistakes: [
+            "Использовать сумму скоростей вместо разности",
+            "Не учесть, что нужно пробежать целый круг",
+            "Перепутать направление движения"
+          ]
+        }
+      },
+      water: {
+        waterFloating: {
+          context: "Плот по течению",
+          basic: "Плот движется со скоростью течения, так как не имеет собственной скорости.",
+          steps: [
+            "Скорость плота = скорости течения",
+            "Время = расстояние / скорость",
+            "Убедись, что единицы измерения согласованы"
+          ],
+          visual: `Река: скорость течения ${rand(2, 6)} км/ч
+Плот: v = скорость течения
+Расстояние: ${rand(10, 40)} км
+t = S / v`,
+          commonMistakes: [
+            "Пытаться найти собственную скорость плота",
+            "Сложить скорость течения с нулём",
+            "Перепутать скорость плота и лодки"
+          ]
+        }
+      },
+      work: {
+        workCleaning: {
+          context: "Уборка дома",
+          basic: "Раздели работу на две части: работа в одиночку и работа вместе. Сложи выполненную работу.",
+          steps: [
+            "Найди производительности: p₁ = 1/t₁, p₂ = 1/t₂",
+            "Найди работу, сделанную первым за время delay: A₁ = p₁ × delay",
+            "Найди оставшуюся работу: A_ост = 1 - A₁",
+            "Найди время совместной работы: t_совм = A_ост / (p₁ + p₂)",
+            "Общее время = delay + t_совм"
+          ],
+          visual: `Первый: ${rand(6, 12)} ч на всю уборку
+Второй: ${rand(8, 15)} ч на всю уборку
+Первый работает ${rand(1, 3)} ч один
+Затем работают вместе`,
+          commonMistakes: [
+            "Сложить времена работы",
+            "Не найти долю выполненной работы",
+            "Забыть перевести производительность в правильные единицы"
+          ]
+        }
+      },
+      prog: {
+        progDeposit: {
+          context: "Вклад под проценты",
+          basic: "Это геометрическая прогрессия. Каждый год сумма умножается на (1 + процент/100).",
+          steps: [
+            "Найди коэффициент роста: q = 1 + p/100",
+            "Используй формулу сложных процентов: S = S₀ × qⁿ",
+            "Возведи q в степень n",
+            "Умножь на начальную сумму"
+          ],
+          visual: `Начальный вклад: ${rand(10000, 50000)} руб
+Процент: ${rand(5, 15)}% годовых
+Время: ${rand(3, 6)} года
+S = начальный × (1 + p/100)^n`,
+          commonMistakes: [
+            "Использовать арифметическую прогрессию вместо геометрической",
+            "Забыть возвести в степень",
+            "Перепутать простые и сложные проценты"
+          ]
+        }
+      }
+    };
+
+    function getExtendedHint(type, subtype) {
+      if (EXTENDED_HINTS[type] && EXTENDED_HINTS[type][subtype]) {
+        return EXTENDED_HINTS[type][subtype];
+      }
+      
+      return null;
+    }
+
+    // Теория (содержимое по темам — как в стабильной версии)
+    const THEORY = {
+      mix: {
+        title: 'Смеси и растворы',
+        content: `
+          <h3>Главная идея</h3>
+          <p><b>Масса вещества = масса (объём) раствора · доля.</b></p>
+          <p style="text-align:center"><b>c = m_вещества / m_раствора · 100%</b></p>
+
+          <h3>Как считать</h3>
+          <p><b>1.</b> Переведи проценты в долю: <b>c = p / 100</b>.</p>
+          <p><b>2.</b> Найди массу вещества: <b>m = V · c</b>.</p>
+          <p><b>3.</b> При смешивании суммируй массы вещества и объёмы.</p>
+
+          <h3>Примеры контекстов</h3>
+          <p>• Смешивание растворов кислоты/соли</p>
+          <p>• Кофе с разным содержанием кофеина</p>
+          <p>• Краски разной концентрации пигмента</p>
+          <p>• Джемы с разным содержанием сахара</p>
+
+          <h3>Пример</h3>
+          <p>20 л 10%-го и 10 л 20%-го растворов. Найти концентрацию смеси.</p>
+          <p style="text-align:center">
+            m₁ = 20 · 0,1 = 2, m₂ = 10 · 0,2 = 2, m = 4, V = 30, c = 4/30 ≈ 13,3%.
+          </p>
+        `
+      },
+      line: {
+        title: 'Движение по прямой',
+        content: `
+          <h3>Формула</h3>
+          <p style="text-align:center"><b>S = v · t</b></p>
+          <p>S — путь, v — скорость, t — время.</p>
+
+          <h3>Случаи</h3>
+          <p><b>Встреча:</b> складываем скорости: <b>v = v₁ + v₂</b>.</p>
+          <p><b>Догонялки:</b> берём разность: <b>v = |v₁ − v₂|</b>.</p>
+          <p><b>Средняя скорость:</b> весь путь / всё время.</p>
+
+          <h3>Примеры контекстов</h3>
+          <p>• Встреча автомобилей</p>
+          <p>• Догонялки</p>
+          <p>• Пешком + на автобусе</p>
+          <p>• Автобус с остановками</p>
+
+          <h3>Алгоритм</h3>
+          <ol>
+            <li>Нарисуй схему движения.</li>
+            <li>Вырази путь каждого через S = vt.</li>
+            <li>Составь уравнение по условию.</li>
+          </ol>
+        `
+      },
+      circle: {
+        title: 'Движение по круговой дороге',
+        content: `
+          <h3>Встречи на круге</h3>
+          <p>По кругу удобно считать пройденное расстояние в длинах круга: L, 2L, 3L и т.д.</p>
+          <p><b>Встреча навстречу:</b> относительная скорость <b>v = v₁ + v₂</b>, путь до встречи L.</p>
+          <p><b>Догонялки:</b> относительная скорость <b>v = |v₁ − v₂|</b>, путь до встречи тоже L.</p>
+          <p>Дальше всегда t = S / v.</p>
+
+          <h3>Примеры контекстов</h3>
+          <p>• Бег по стадиону</p>
+          <p>• Круговые автогонки</p>
+          <p>• Движение по кольцевой дороге</p>
+
+          <h3>Пример</h3>
+          <p>Два бегуна бегут по кругу длиной 400 м со скоростями 5 м/с и 7 м/с в одном направлении. Через сколько секунд быстрый догонит медленного?</p>
+          <p>v = 7 - 5 = 2 м/с, t = 400 / 2 = 200 с.</p>
+        `
+      },
+      water: {
+        title: 'Движение по реке',
+        content: `
+          <h3>Скорости</h3>
+          <p><b>По течению:</b> v = vлодки + vтечения.</p>
+          <p><b>Против течения:</b> v = vлодки − vтечения.</p>
+          <p><b>Плот (без мотора):</b> v = vтечения.</p>
+
+          <h3>Примеры контекстов</h3>
+          <p>• Лодка туда и обратно</p>
+          <p>• Прогулка с остановкой</p>
+          <p>• Плот по течению</p>
+          <p>• Катер с разной скоростью</p>
+
+          <h3>Алгоритм</h3>
+          <ol>
+            <li>Раздели путь на «туда» и «обратно».</li>
+            <li>Найди скорости в каждую сторону.</li>
+            <li>Найди времена и сложи их.</li>
+          </ol>
+        `
+      },
+      work: {
+        title: 'Работа и производительность',
+        content: `
+          <h3>Основная идея</h3>
+          <p>Если исполнитель выполняет всю работу за T часов, то за 1 час он делает <b>1/T</b> работы.</p>
+          <p><b>Совместная работа:</b> доли складываются:
+             <b>1/Т = 1/T₁ + 1/T₂ + ...</b>.</p>
+
+          <h3>Примеры контекстов</h3>
+          <p>• Два/три рабочих</p>
+          <p>• Трубы (наполнение + слив)</p>
+          <p>• Работа с опозданием</p>
+          <p>• Уборка дома</p>
+          <p>• Набор текста</p>
+
+          <h3>Алгоритм</h3>
+          <ol>
+            <li>Запиши доли работы каждого за единицу времени.</li>
+            <li>Сложи доли, получишь 1/Т.</li>
+            <li>Найди Т — общее время.</li>
+          </ol>
+        `
+      },
+      prog: {
+        title: 'Прогрессии',
+        content: `
+          <h3>Арифметическая прогрессия</h3>
+          <p style="text-align:center"><b>aₙ = a₁ + (n − 1)·d</b></p>
+          <p style="text-align:center"><b>Sₙ = (a₁ + aₙ)·n / 2</b></p>
+
+          <h3>Геометрическая прогрессия (для вкладов)</h3>
+          <p style="text-align:center"><b>bₙ = b₁ · qⁿ⁻¹</b> где q = 1 + p/100</p>
+          <p style="text-align:center">Сумма вклада через n лет: <b>S = S₀ · (1 + p/100)ⁿ</b></p>
+
+          <h3>Примеры контекстов</h3>
+          <p>• Поставки товара (арифметическая)</p>
+          <p>• Платежи по месяцам (арифметическая)</p>
+          <p>• Вклады под проценты (геометрическая)</p>
+          <p>• Тренировки с увеличением нагрузки</p>
+
+          <h3>Алгоритм задач на сумму</h3>
+          <ol>
+            <li>Определи a₁, d и n из текста.</li>
+            <li>Найди aₙ по формуле.</li>
+            <li>Подставь в формулу суммы Sₙ.</li>
+          </ol>
+        `
+      }
+    };
+
+    const errorMessages = {
+      mix: [
+        "Ответ не совпадает с правильным. Проверь расчёт массы вещества.",
+        "Здесь допущена ошибка. Пересмотри работу с процентами и массой.",
+        "Результат сейчас неверный. Попробуй ещё раз и обрати внимание на формулы для смеси."
+      ],
+      line: [
+        "Ответ не совпал. Перепроверь связь S = v·t и уравнение.",
+        "Сейчас итог неверный. Подумай ещё раз над уравнением для движения.",
+        "Результат не подходит. Стоит пересчитать время или путь."
+      ],
+      circle: [
+        "Ответ неверный. Перепроверь относительную скорость и длину круга.",
+        "Сейчас число не совпадает с правильным. Подумай, как складываются скорости.",
+        "Результат ошибка. Проверь формулу t = L / (v₁ + v₂)."
+      ],
+      water: [
+        "Ответ не совпадает. Пересмотри скорости по течению и против течения.",
+        "Пока неверно. Попробуй ещё раз составить таблицу по участкам пути.",
+        "Результат ошибка. Проверь, как считаешь время туда и обратно."
+      ],
+      work: [
+        "Ответ не совпал. Перепроверь производительности 1/t и уравнение.",
+        "Сейчас результат неверный. Подумай ещё раз над совместной работой.",
+        "Результат не подходит. Проверь дроби в уравнении для работы."
+      ],
+      prog: [
+        "Ответ неверный. Перепроверь формулы для aₙ и Sₙ.",
+        "Сейчас число не совпадает. Подумай, не перепутал(а) ли aₙ и сумму.",
+        "Результат ошибка. Проверь подстановку в формулы прогрессии."
+      ]
+    };
+
+    const successMessages = [
+      "Верный ответ.",
+      "Отлично, ты правильно решил(а) задачу.",
+      "Ответ совпадает с правильным.",
+      "Хорошо, результат верный.",
+      "Ты всё верно посчитал(а)."
+    ];
+
+    const BaseGenerators = {};
+
+
+function diffKey(opts){return opts?.difficulty||'mid';}
+function randByDifficulty(opts,ranges){const d=diffKey(opts);const r=ranges[d]||ranges.mid;return rand(r[0],r[1]);}
+function validateTask(t){if(!t)return false;if(typeof t.text!=='string'||!t.text.trim())return false;if(!Number.isFinite(t.ans))return false;if(!Array.isArray(t.steps)||t.steps.length<3)return false;const last=t.steps[t.steps.length-1];if(!last||last.h!=='Ответ')return false;const ansStr=formatAns(t.ans);if(typeof last.m!=='string'||!last.m.includes(ansStr))return false;return true;}
+
+
+
+
+function qualityGateTask(t){
+  if(!t || typeof t.text !== 'string') return false;
+  const txt = t.text.replace(/\s+/g,' ').trim();
+  // Минимум "полноценного" условия, чтобы не выдавать обрубки
+  if(txt.length < 110) return false;
+  // Должен быть вопрос (или явная формулировка "Найдите/Сколько/Определите")
+  if(!(/[?]\s*$/.test(txt) || /(Найдите|Сколько|Определите|Чему равна)/i.test(txt))) return false;
+  // Должны быть числа (иначе часто это черновик/обрыв)
+  if(!/\d/.test(txt)) return false;
+  // Ответ должен быть "красивым" (целое/конечная десятичная дробь)
+  if(!isNiceAnswerValue(t.ans)) return false;
+
+  // Решение должно быть не пустым и содержать внятные шаги
+  if(!Array.isArray(t.steps) || t.steps.length < 3) return false;
+  const longEnough = t.steps.every(s => typeof s?.m === 'string' && s.m.replace(/\s+/g,' ').trim().length >= 18);
+  if(!longEnough) return false;
+  return true;
+}
+function isGoodTask(t){ return validateTask(t) && qualityGateTask(t); }
+
+function ensureAnswerStep(task){
+  if(!task) return task;
+  if(!Array.isArray(task.steps)) task.steps = [];
+
+  const answerSteps = task.steps.filter(s =>
+    ((s?.h||'').toLowerCase().includes('ответ')) ||
+    ((s?.m||'').toLowerCase().includes('ответ'))
+  );
+  task.steps = task.steps.filter(s => !(
+    ((s?.h||'').toLowerCase().includes('ответ')) ||
+    ((s?.m||'').toLowerCase().includes('ответ'))
+  ));
+
+  const ansText = `Ответ: ${formatAns(task.ans)}`;
+  const final = answerSteps.length
+    ? { h: 'Ответ', m: String(answerSteps[answerSteps.length - 1].m || ansText) }
+    : { h: 'Ответ', m: ansText };
+
+  task.steps.push(final);
+  return task;
+}
+
+// ============ СУЩЕСТВУЮЩИЕ ГЕНЕРАТОРЫ ============
+
+BaseGenerators.mixconcentration = function(opts){
+  let m1,c1,m2,c2,ans,attempts=0;
+  do{
+    m1 = randByDifficulty(opts,{easy:[5,12],mid:[8,20],hard:[15,40]});
+    m2 = randByDifficulty(opts,{easy:[5,12],mid:[8,20],hard:[15,40]});
+    c1 = randByDifficulty(opts,{easy:[10,25],mid:[10,40],hard:[20,60]});
+    c2 = randByDifficulty(opts,{easy:[5,20],mid:[5,40],hard:[10,55]});
+    if (Math.abs(c1-c2) < 5) continue;
+    ans = (m1*c1 + m2*c2) / (m1+m2);
+    attempts++;
+  } while ((ans<=1 || ans>=99) && attempts<100);
+  ans = Math.round(ans*10)/10;
+
+  const m1a = (m1*c1/100);
+  const m2a = (m2*c2/100);
+  const totalA = m1a + m2a;
+  const totalV = m1 + m2;
+
+  return {
+    title: 'Смесь растворов',
+    text: `
+В сосуд налили ${m1} ${literText(m1)} раствора концентрацией ${c1}%
+и добавили ${m2} ${literText(m2)} раствора концентрацией ${c2}%.
+
+Какова концентрация получившегося раствора (в процентах)?
+`.trim(),
+    ans,
+    steps: [
+      { h:'Масса вещества', m:`Найдём массу (количество) растворённого вещества в каждом растворе: m = V·c/100.\nm₁ = ${m1}·${c1}/100 = ${m1a.toFixed(2)}, m₂ = ${m2}·${c2}/100 = ${m2a.toFixed(2)}.`},
+      { h:'Суммарная масса', m:`Сложим массы вещества и объёмы растворов.\nВсего вещества: ${m1a.toFixed(2)} + ${m2a.toFixed(2)} = ${totalA.toFixed(2)}.\nОбщий объём: ${m1}+${m2}=${totalV}.`},
+      { h:'Новая концентрация', m:`Концентрация = (масса вещества / общий объём) · 100%.\nc = ${totalA.toFixed(2)}/${totalV}·100 = ${ans}%.`},
+      { h:'Ответ', m:`Ответ: ${ans}` }
+    ]
+  };
+};
+
+BaseGenerators.mixmass = function(opts) {
+      let m1, c1, c2, ctarget, x, ans;
+      let attempts = 0;
+
+      do {
+        m1 = rand(10, 30);        // первая масса
+        c1 = rand(20, 50);        // концентрация первой
+        c2 = rand(5, 15);         // концентрация добавляемого раствора
+        ctarget = rand(c2 + 1, c1 - 1); // целевая концентрация между c2 и c1
+
+        // x — масса второго раствора
+        // уравнение по массе вещества:
+        // m1*c1/100 + x*c2/100 = (m1 + x)*ctarget/100
+        x = m1 * (c1 - ctarget) / (ctarget - c2);
+        ans = x;
+        attempts++;
+      } while ((ans <= 1 || ans >= 100) && attempts < 100);
+
+      ans = Math.round(ans);
+
+      const title = "Смеси: сколько раствора добавить";
+      const text = `${m1} ${literText(m1)} раствора крепостью ${c1}%. К нему добавляют раствор крепостью ${c2}%, чтобы получить раствор крепостью ${ctarget}%. Сколько ${literText(ans)} второго раствора нужно добавить?`.trim();
+
+      const m1v = (m1 * c1 / 100).toFixed(2);
+
+      return {
+        title,
+        text,
+        ans,
+        steps: [
+          {
+            h: "Шаг 1. Обозначим неизвестную массу",
+            m: `
+Пусть нужно добавить <b>x</b> ${literText(1)} раствора крепостью ${c2}%. Тогда общая масса смеси будет <b>${m1} + x</b>.
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Найдём массу вещества в каждом растворе",
+            m: `
+Масса вещества в первом растворе: <b>${m1}·${c1}/100 = ${m1v}</b>.<br>
+Масса вещества во втором растворе: <b>x·${c2}/100</b>.
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Составим уравнение по массе вещества",
+            m: `
+После смешивания получится раствор крепостью ${ctarget}% массой ${m1} + x.<br>
+Масса вещества в смеси должна быть равна:<br>
+<b>${m1}·${c1}/100 + x·${c2}/100 = ( ${m1} + x )·${ctarget}/100</b>.
+            `.trim()
+          },
+          {
+            h: "Шаг 4. Решим уравнение относительно x",
+            m: `
+Упростим уравнение:<br>
+${m1}·${c1} + x·${c2} = ( ${m1} + x )·${ctarget}.<br>
+${m1}·${c1} + x·${c2} = ${m1}·${ctarget} + x·${ctarget}.<br>
+Переносим x в одну сторону,<br>
+x·(${c2} − ${ctarget}) = ${m1}·(${ctarget} − ${c1}).<br>
+<b>x = ${m1}·(${c1} − ${ctarget}) / (${ctarget} − ${c2}) ≈ ${ans}</b>.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    BaseGenerators.mixEvaporation = function(opts) {
+      let initialVolume, initialConc, evaporated, finalConc, ans;
+      let attempts = 0;
+
+      do {
+        initialVolume = rand(10, 30);     // исходный объём
+        initialConc   = rand(5, 20);      // исходная концентрация
+        evaporated    = rand(3, Math.floor(initialVolume * 0.5)); // сколько испарили
+        const substanceMass = initialVolume * initialConc / 100;
+        const finalVolume   = initialVolume - evaporated;
+        finalConc = substanceMass / finalVolume * 100;
+        ans = finalConc;
+        attempts++;
+      } while ((ans <= 1 || ans >= 95) && attempts < 100);
+
+      ans = Math.round(ans * 10) / 10;
+
+      const title = "Выпаривание раствора";
+      const text = `Было ${initialVolume} ${literText(initialVolume)} раствора концентрацией ${initialConc}%. После выпаривания ${evaporated} ${literText(evaporated)} воды концентрация раствора увеличилась. Какой стала концентрация раствора?`.trim();
+
+      const substanceMass = (initialVolume * initialConc / 100).toFixed(2);
+      const finalVolume   = initialVolume - evaporated;
+
+      return {
+        title,
+        text,
+        ans,
+        steps: [
+          {
+            h: "Шаг 1. Найдём массу вещества в исходном растворе",
+            m: `
+<b>Масса вещества не меняется при выпаривании воды.</b><br>
+m<sub>вещ</sub> = ${initialVolume}·${initialConc}/100 = <b>${substanceMass}</b>.
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Найдём новый объём раствора",
+            m: `
+Испарилась только вода, объём уменьшился:<br>
+V<sub>нов</sub> = ${initialVolume} − ${evaporated} = <b>${finalVolume}</b>.
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Выразим новую концентрацию",
+            m: `
+Новая концентрация:<br>
+c<sub>нов</sub> = (m<sub>вещ</sub> / V<sub>нов</sub>)·100% = ${substanceMass} / ${finalVolume}·100%.<br>
+Вычисляя, получаем <b>${ans}%</b>.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    BaseGenerators.percentSimple = function(opts) {
+      let initial, percent, ans, direction;
+      let attempts = 0;
+
+      do {
+        initial = rand(10000, 50000);
+        percent = rand(5, 30);
+        direction = Math.random() < 0.5 ? 1 : -1; // +percent или -percent
+        ans = initial * (1 + direction * percent / 100);
+        attempts++;
+      } while ((ans <= 0 || ans >= 200000) && attempts < 100);
+
+      ans = Math.round(ans);
+
+      const directionText = direction > 0 ? "увеличили" : "уменьшили";
+      const title = "Простые проценты: изменение суммы";
+      const text = `Сумма ${initial} ${rubleText(initial)} ${directionText} на ${percent}%. Чему стала равна сумма после изменения?`.trim();
+
+      const k = 1 + direction * percent / 100;
+
+      return {
+        title,
+        text,
+        ans,
+        steps: [
+          {
+            h: "Шаг 1. Перевод процента в коэффициент",
+            m: `
+<div class="data-table">
+  <table>
+    <tr>
+      <th>Процент изменения</th>
+      <th>В долях</th>
+      <th>Коэффициент</th>
+    </tr>
+    <tr>
+      <td>${percent}%</td>
+      <td>${percent}/100</td>
+      <td>${direction > 0 ? `1 + ${percent}/100` : `1 - ${percent}/100`}</td>
+    </tr>
+  </table>
+</div>
+<b>Идея:</b> удобно не прибавлять проценты вручную, а умножать исходную сумму на коэффициент k.<br>
+Если увеличили на p%, берём k = 1 + p/100. Если уменьшили на p%, берём k = 1 − p/100.
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Записываем формулу для новой суммы",
+            m: `
+Новая сумма = исходная сумма · коэффициент:<br>
+S<sub>нов</sub> = ${initial} · (${direction > 0 ? `1 + ${percent}/100` : `1 - ${percent}/100`}).
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Подставляем и считаем",
+            m: `
+Коэффициент изменения: k = 1 ${direction > 0 ? "+" : "−"} ${percent}/100 = ${k.toFixed(2)}.<br>
+Тогда новая сумма:<br>
+S<sub>нов</sub> = ${initial} · ${k.toFixed(2)} ≈ <b>${ans}</b> ${rubleText(ans)}.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    BaseGenerators.percentMultiple = function(opts) {
+      let initial, p1, p2, ans;
+      let attempts = 0;
+
+      do {
+        initial = rand(20000, 50000);
+        p1 = rand(10, 25);
+        p2 = rand(10, 25);
+        const dir1 = Math.random() < 0.5 ? 1 : -1;
+        const dir2 = Math.random() < 0.5 ? 1 : -1;
+        const k1 = 1 + dir1 * p1 / 100;
+        const k2 = 1 + dir2 * p2 / 100;
+        ans = initial * k1 * k2;
+        attempts++;
+      } while ((ans <= 0 || ans >= 200000) && attempts < 100);
+
+      ans = Math.round(ans);
+
+      const dir1 = ans > initial * (1 + p1/100) ? 1 : -1;
+      const dir2 = ans > initial ? 1 : (ans < initial ? -1 : (Math.random() < 0.5 ? 1 : -1));
+      const dir1Text = dir1 > 0 ? "увеличили" : "уменьшили";
+      const dir2Text = dir2 > 0 ? "увеличили" : "уменьшили";
+
+      const title = "Двойное изменение в процентах";
+      const text = `Сначала сумму ${initial} ${rubleText(initial)} ${dir1Text} на ${p1}%, а затем получившуюся сумму ещё раз ${dir2Text} на ${p2}%. Чему стала равна сумма после двух изменений?`.trim();
+
+      const k1 = 1 + dir1 * p1 / 100;
+      const k2 = 1 + dir2 * p2 / 100;
+
+      return {
+        title,
+        text,
+        ans,
+        steps: [
+          {
+            h: "Шаг 1. Переводим каждое изменение в свой коэффициент",
+            m: `
+Первое изменение: k₁ = 1 ${dir1 > 0 ? "+" : "−"} ${p1}/100 = ${k1.toFixed(2)}.<br>
+Второе изменение: k₂ = 1 ${dir2 > 0 ? "+" : "−"} ${p2}/100 = ${k2.toFixed(2)}.
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Записываем по шагам, как меняется сумма",
+            m: `
+После первого изменения:<br>
+S₁ = ${initial} · k₁.<br><br>
+После второго изменения:<br>
+S₂ = S₁ · k₂ = ${initial} · k₁ · k₂.
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Подставляем числа и считаем",
+            m: `
+S₂ = ${initial} · ${k1.toFixed(2)} · ${k2.toFixed(2)} ≈ <b>${ans}</b> ${rubleText(ans)}.<br>
+<b>Важно:</b> два изменения подряд — это произведение двух коэффициентов, а не сложение процентов.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    BaseGenerators.percentDiscount = function(opts) {
+      let price, discount, ans;
+      let attempts = 0;
+
+      do {
+        price = rand(1000, 10000);
+        discount = rand(10, 50);
+        ans = price * (1 - discount / 100);
+        attempts++;
+      } while ((ans <= 10 || ans >= price) && attempts < 100);
+
+      ans = Math.round(ans);
+
+      const title = "Скидка в процентах";
+      const text = `Товар стоит ${price} ${rubleText(price)}. Магазин объявил скидку ${discount}%. Сколько рублей нужно заплатить за товар после скидки?`.trim();
+
+      const rest = 100 - discount;
+      const k = rest / 100;
+
+      return {
+        title,
+        text,
+        ans,
+        steps: [
+          {
+            h: "Шаг 1. Сколько процентов цены останется?",
+            m: `
+Если скидка ${discount}%, то покупатель платит только <b>${rest}%</b> от первоначальной цены.<br>
+<b>Идея:</b> вместо «минус скидка» думать «останется ${rest}% цены».
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Переводим проценты в коэффициент",
+            m: `
+${rest}% = ${rest}/100 = ${k.toFixed(2)}.<br>
+Значит, цену нужно умножить на коэффициент <b>k = ${rest}/100</b>.
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Считаем новую цену",
+            m: `
+Новая цена = исходная цена · коэффициент:<br>
+S<sub>нов</sub> = ${price} · ${rest}/100 ≈ ${price} · ${k.toFixed(2)} ≈ <b>${ans}</b> ${rubleText(ans)}.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    // НОВЫЙ ГЕНЕРАТОР: Смешивание кофе
+BaseGenerators.mixCoffee = function(opts) {
+  let m1, c1, m2, c2, ans, attempts = 0;
+  do {
+    m1 = randByDifficulty(opts, { easy: [100, 300], mid: [200, 500], hard: [400, 800] });
+    m2 = randByDifficulty(opts, { easy: [100, 300], mid: [200, 500], hard: [400, 800] });
+    c1 = randByDifficulty(opts, { easy: [2, 6], mid: [4, 10], hard: [8, 15] });
+    c2 = randByDifficulty(opts, { easy: [3, 8], mid: [6, 12], hard: [10, 20] });
+    ans = (m1 * c1 + m2 * c2) / (m1 + m2);
+    attempts++;
+  } while ((ans <= 0.5 || ans >= 20) && attempts < 100);
+  ans = Math.round(ans * 10) / 10;
+
+  const m1c = (m1 * c1 / 100).toFixed(2);
+  const m2c = (m2 * c2 / 100).toFixed(2);
+  const totalC = (parseFloat(m1c) + parseFloat(m2c)).toFixed(2);
+  const totalM = m1 + m2;
+
+  return {
+    title: 'Смешивание кофе',
+    text: `
+Смешали ${m1} ${gramText(m1)} кофе сорта А с содержанием кофеина ${c1}% и ${m2} ${gramText(m2)} кофе сорта В с содержанием кофеина ${c2}%. 
+
+Найдите концентрацию кофеина в смеси (в процентах).
+`.trim(),
+    ans: ans,
+    steps: [
+      { h: 'Масса кофеина в сорте А', m: `m₁ = ${m1} г × ${c1}% = ${m1} × ${c1/100} = ${m1c} г` },
+      { h: 'Масса кофеина в сорте В', m: `m₂ = ${m2} г × ${c2}% = ${m2} × ${c2/100} = ${m2c} г` },
+      { h: 'Общая масса кофеина', m: `m = ${m1c} + ${m2c} = ${totalC} г` },
+      { h: 'Общая масса смеси', m: `M = ${m1} г + ${m2} г = ${totalM} г` },
+      { h: 'Концентрация кофеина', m: `c = m / M × 100% = ${totalC} / ${totalM} × 100% = ${ans}%` },
+      { h: 'Ответ', m: `Ответ: ${ans}%` }
+    ]
+  };
+};
+
+    // --- Движение по прямой ---
+    BaseGenerators.linetime = function(opts) {
+      let v1, v2, s, ans;
+      let attempts = 0;
+      do {
+        v1 = rand(40, 90);
+        v2 = rand(40, 90);
+        if (Math.abs(v1 - v2) < 10) continue;
+        s = rand(100, 500);
+        ans = s / (v1 + v2);
+        attempts++;
+      } while ((ans <= 0.2 || ans > 10) && attempts < 100);
+      ans = Math.round(ans * 10) / 10;
+
+      return {
+        title: 'Встреча автомобилей',
+        text: `
+          Два автомобиля выехали навстречу друг другу из двух городов,
+          расстояние между которыми ${s} ${kmText(s)}.
+          Скорость первого автомобиля — ${v1} км/ч, второго — ${v2} км/ч.
+          Через сколько часов они встретятся?
+          Ответ дайте с точностью до десятых.
+        `,
+        ans,
+        steps: [
+          { h: 'Относительная скорость', m: 'При движении навстречу складываются скорости: v = v₁ + v₂.' },
+          { h: 'Время', m: 't = S / v.' }
+        ]
+      };
+    };
+
+    BaseGenerators.lineparts = function(opts) {
+      let v1, v2, s, ans;
+      let attempts = 0;
+      do {
+        v1 = rand(50, 100);
+        v2 = rand(30, 80);
+        s = rand(200, 600);
+        ans = s / Math.abs(v1 - v2);
+        attempts++;
+      } while ((ans <= 0.5 || ans > 20) && attempts < 100);
+      ans = Math.round(ans * 10) / 10;
+
+      return {
+        title: 'Догонялки',
+        text: `
+          Из одного города в одном направлении выехали два автомобиля.
+          Скорость первого — ${v1} км/ч, второго — ${v2} км/ч.
+          Через какое время более быстрый автомобиль окажется от другого
+          на расстоянии ${s} ${kmText(s)}?
+          Ответ дайте в часах, с точностью до десятых.
+        `,
+        ans,
+        steps: [
+          { h: 'Относительная скорость', m: 'v = |v₁ − v₂|.' },
+          { h: 'Время', m: 't = S / v.' }
+        ]
+      };
+    };
+
+    BaseGenerators.linethirds = function(opts) {
+      const base = rand(10, 20) * 3;
+      let v1 = base + rand(2, 4);
+      let v2 = base + rand(2, 4);
+      let v3 = base + rand(2, 4);
+      const third = base;
+      const totalDistance = third * 3;
+      const t1 = third / v1;
+      const t2 = third / v2;
+      const t3 = third / v3;
+      const totalTime = t1 + t2 + t3;
+      const ans = Math.round((totalDistance / totalTime) * 10) / 10;
+
+      return {
+        title: 'Средняя скорость на участках',
+        text: `
+          Турист прошёл первый участок пути длиной ${third} ${kmText(third)}
+          со скоростью ${v1} км/ч,
+          второй такой же участок — со скоростью ${v2} км/ч,
+          а третий — со скоростью ${v3} км/ч.
+          Найдите среднюю скорость туриста на всём пути.
+          Ответ дайте в км/ч, с точность до десятых.
+        `,
+        ans,
+        steps: [
+          { h: 'Время на участках', m: 'Для каждого участка: t = S / v.' },
+          { h: 'Общее время и путь', m: 'Сложи времена t₁, t₂, t₃ и пути: Sобщ = 3 · Sуч.' },
+          { h: 'Средняя скорость', m: 'vср = Sобщ / tобщ.' }
+        ]
+      };
+    };
+
+    // Новый бытовой контекст: пешком + автобус
+    BaseGenerators.linecity = function(opts) {
+      let vWalk = rand(4, 6);
+      let vBus  = rand(30, 50);
+      let tWalk = rand(10, 20);
+      let tBus  = rand(20, 40);
+
+      const S1 = vWalk * tWalk / 60;
+      const S2 = vBus  * tBus  / 60;
+      const ans = Math.round((S1 + S2) * 10) / 10;
+
+      return {
+        title: 'Дорога в город',
+        text: `
+          Ученик идёт от дома до автобусной остановки пешком со скоростью ${vWalk} км/ч,
+          а затем едет на автобусе со скоростью ${vBus} км/ч.
+          Пешком он идёт ${tWalk} минут, на автобусе едет ${tBus} минут.
+          Какое расстояние в километрах он преодолевает от дома до школы?
+          Ответ округлите до десятых.
+        `,
+        ans,
+        steps: [
+          { h: 'Перевод времени', m: 'Переведи минуты в часы: t = минуты / 60.' },
+          { h: 'Путь пешком', m: 'Найди путь пешком: S₁ = vходьбы · tходьбы.' },
+          { h: 'Путь на автобусе', m: 'Найди путь на автобусе: S₂ = vавтобуса · tавтобуса.' },
+          { h: 'Общий путь', m: 'Сложи пути: S = S₁ + S₂.' }
+        ]
+      };
+    };
+
+// НОВЫЙ ГЕНЕРАТОР: Автобус с остановками
+BaseGenerators.lineBus = function(opts) {
+  let distance, speed, stopTime, stopCount, ans;
+  distance = randByDifficulty(opts, { easy: [10, 30], mid: [30, 60], hard: [50, 100] });
+  speed = randByDifficulty(opts, { easy: [40, 60], mid: [50, 70], hard: [60, 80] });
+  stopCount = randByDifficulty(opts, { easy: [2, 4], mid: [3, 6], hard: [5, 8] });
+  stopTime = randByDifficulty(opts, { easy: [1, 3], mid: [2, 5], hard: [3, 7] });
+
+  const travelTime = distance / speed;
+  const totalStopTime = stopCount * stopTime / 60;
+  const totalTime = travelTime + totalStopTime;
+  ans = Math.round(distance / totalTime * 10) / 10;
+
+  return {
+    title: 'Автобус с остановками',
+    text: `
+Автобус проезжает ${distance} ${kmText(distance)} со скоростью ${speed} км/ч. По маршруту ${stopCount} остановки, на каждой автобус стоит ${stopTime} ${stopTime === 1 ? 'минуту' : stopTime < 5 ? 'минуты' : 'минут'}.
+
+Найдите среднюю скорость автобуса (с учетом остановок) в км/ч.
+`.trim(),
+    ans: ans,
+    steps: [
+      { h: 'Время движения без остановок', m: `t₁ = S / v = ${distance} / ${speed} = ${travelTime.toFixed(2)} ч` },
+      { h: 'Общее время остановок', m: `t₂ = количество остановок × время одной = ${stopCount} × ${stopTime} мин = ${(stopCount * stopTime)} мин = ${totalStopTime.toFixed(2)} ч` },
+      { h: 'Общее время', m: `T = t₁ + t₂ = ${travelTime.toFixed(2)} + ${totalStopTime.toFixed(2)} = ${totalTime.toFixed(2)} ч` },
+      { h: 'Средняя скорость', m: `v_ср = S / T = ${distance} / ${totalTime.toFixed(2)} = ${ans} км/ч` },
+      { h: 'Ответ', m: `Ответ: ${ans} км/ч` }
+    ]
+  };
+};
+
+    // --- Круг ---
+    BaseGenerators.circle = function(opts) {
+      let v1, v2, L, ans;
+      let attempts = 0;
+
+      do {
+        v1 = rand(5, 15);
+        v2 = rand(3, 12);
+        if (Math.abs(v1 - v2) < 2) continue;
+
+        L = rand(100, 400);
+        ans = L / (v1 + v2);
+
+        attempts++;
+      } while (
+        (!isFinite(ans) || ans <= 1 || ans >= 60) &&
+        attempts < 100
+      );
+
+      if (!isFinite(ans)) {
+        // запасной полностью корректный кейс
+        v1 = 10;
+        v2 = 5;
+        L = 300;
+        ans = L / (v1 + v2);
+      }
+
+      ans = Math.round(ans * 10) / 10;
+
+      const title = "Движение по круговой дорожке";
+      const text = `По круговой дорожке длиной ${L} ${meterText(L)} бегут навстречу друг другу два бегуна. Скорости бегунов — ${v1} и ${v2} м/с. Через сколько секунд они встретятся впервые? Ответ дайте с точностью до десятых.`.trim();
+
+      const steps = [
+        {
+          h: "Шаг 1. Относительная скорость",
+          m: `
+Оба бегут навстречу, значит относительная скорость:<br>
+v<sub>отн</sub> = ${v1} + ${v2} = <b>${v1 + v2}</b> м/с.
+          `.trim()
+        },
+        {
+          h: "Шаг 2. Формула времени встречи",
+          m: `
+t = L / v<sub>отн</sub> = ${L} / (${v1} + ${v2}).
+          `.trim()
+        },
+        {
+          h: "Шаг 3. Подставляем числа",
+          m: `
+t = ${L} / (${v1} + ${v2}) = ${L} / ${v1 + v2} ≈ <b>${ans}</b> секунд.
+          `.trim()
+        }
+      ];
+
+      return { title, text, ans, steps };
+    };
+
+// НОВЫЙ ГЕНЕРАТОР: Бег по стадиону
+BaseGenerators.circleStadium = function(opts) {
+  let L, v1, v2, ans;
+  L = randByDifficulty(opts, { easy: [400, 600], mid: [600, 800], hard: [800, 1000] });
+  v1 = randByDifficulty(opts, { easy: [5, 8], mid: [7, 10], hard: [9, 12] });
+  v2 = randByDifficulty(opts, { easy: [4, 7], mid: [6, 9], hard: [8, 11] });
+  
+  if (v1 <= v2) v1 = v2 + 1;
+  ans = L / Math.abs(v1 - v2);
+  ans = Math.round(ans * 10) / 10;
+
+  return {
+    title: 'Бег по стадиону',
+    text: `
+Два бегуна бегут по круговой дорожке стадиона длиной ${L} ${meterText(L)} в одном направлении. Скорости бегунов ${v1} м/с и ${v2} м/с.
+
+Через сколько секунд более быстрый бегун догонит более медленного в первый раз?
+`.trim(),
+    ans: ans,
+    steps: [
+      { h: 'Относительная скорость', m: `v = |v₁ - v₂| = |${v1} - ${v2}| = ${Math.abs(v1 - v2)} м/с` },
+      { h: 'Путь до встречи', m: `Чтобы догнать, нужно пройти на один круг больше. Поэтому S = L = ${L} м` },
+      { h: 'Время встречи', m: `t = S / v = ${L} / ${Math.abs(v1 - v2)} = ${ans} с` },
+      { h: 'Ответ', m: `Ответ: ${ans} с` }
+    ]
+  };
+};
+
+    // --- Река ---
+    BaseGenerators.watersimple = function(opts) {
+      let vboat, vriver, s, ans;
+      let attempts = 0;
+
+      do {
+        vboat = rand(15, 30);      // скорость лодки в стоячей воде
+        vriver = rand(2, 8);       // скорость течения
+        s = rand(50, 200);         // расстояние между пунктами
+        const tdown = s / (vboat + vriver);
+        const tup = s / (vboat - vriver);
+        ans = tdown + tup;
+        attempts++;
+      } while ((ans <= 1 || ans >= 10) && attempts < 100);
+
+      ans = Math.round(ans * 10) / 10;
+
+      const title = "Лодка по течению и против течения";
+      const text = `Лодка плывёт из пункта A в пункт B и обратно. Расстояние между пунктами ${s} ${kmText(s)}. Скорость лодки в стоячей воде ${vboat} км/ч, скорость течения реки ${vriver} км/ч. За сколько часов лодка проплывёт путь туда и обратно?`.trim();
+
+      const tdownExact = s / (vboat + vriver);
+      const tupExact = s / (vboat - vriver);
+
+      return {
+        title,
+        text,
+        ans,
+        steps: [
+          {
+            h: "Шаг 1. Таблица скоростей и времени",
+            m: `
+<div class="data-table">
+  <table>
+    <tr>
+      <th>Участок</th>
+      <th>Скорость</th>
+      <th>Расстояние</th>
+      <th>Время</th>
+    </tr>
+    <tr>
+      <td>По течению</td>
+      <td>v<sub>по</sub> = ${vboat} + ${vriver}</td>
+      <td>${s}</td>
+      <td>t<sub>1</sub> = ${s}/(${vboat}+${vriver})</td>
+    </tr>
+    <tr>
+      <td>Против течения</td>
+      <td>v<sub>против</sub> = ${vboat} - ${vriver}</td>
+      <td>${s}</td>
+      <td>t<sub>2</sub> = ${s}/(${vboat}-${vriver})</td>
+    </tr>
+  </table>
+</div>
+<b>По течению</b> скорость больше: v = vлодки + vтечения.<br>
+<b>Против течения</b> скорость меньше: v = vлодки − vтечения.
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Выражаем время пути туда и обратно",
+            m: `
+Время по течению:<br>
+t<sub>1</sub> = ${s} / (${vboat} + ${vriver}).<br><br>
+Время против течения:<br>
+t<sub>2</sub> = ${s} / (${vboat} - ${vriver}).
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Общее время движения",
+            m: `
+Общее время пути туда и обратно — сумма времени по течению и против течения:<br>
+t = t<sub>1</sub> + t<sub>2</sub> = ${s}/(${vboat}+${vriver}) + ${s}/(${vboat}-${vriver}).
+            `.trim()
+          },
+          {
+            h: "Шаг 4. Подставляем числа и считаем",
+            m: `
+t<sub>1</sub> = ${s} / (${vboat}+${vriver}) ≈ ${tdownExact.toFixed(2)} ч.<br>
+t<sub>2</sub> = ${s} / (${vboat}-${vriver}) ≈ ${tupExact.toFixed(2)} ч.<br><br>
+t = t<sub>1</sub> + t<sub>2</sub> ≈ ${tdownExact.toFixed(2)} + ${tupExact.toFixed(2)} ≈ <b>${ans}</b> ${hourText(ans)}.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    BaseGenerators.waterstop = function(opts) {
+      let vboat, vriver, s, tstop, ans;
+      let attempts = 0;
+      do {
+        vboat = rand(18, 28);
+        vriver = rand(2, 6);
+        s = rand(60, 150);
+        tstop = rand(1, 3);
+        const tdown = s / (vboat + vriver);
+        const tup   = s / (vboat - vriver);
+        ans = tdown + tup + tstop;
+        attempts++;
+      } while ((ans <= 1 || ans > 60) && attempts < 100);
+      ans = Math.round(ans * 10) / 10;
+
+      return {
+        title: 'Прогулка по реке с остановкой',
+        text: `
+          Лодка проплывает от пристани до деревни и обратно, делая остановку в деревне на
+          ${tstop} ${hourText(tstop)}.
+          Расстояние до деревни — ${s} ${kmText(s)}.
+          Собственная скорость лодки ${vboat} км/ч, скорость течения реки ${vriver} км/ч.
+          Сколько часов длится вся прогулка?
+          Ответ дайте с точностью до десятых.
+        `,
+        ans,
+        steps: [
+          { h: 'Время пути', m: 'Найди время по течению и против течения, как в обычной задаче по реке.' },
+          { h: 'Добавь остановку', m: 'Прибавь время остановки в деревне.' }
+        ]
+      };
+    };
+
+// НОВЫЙ ГЕНЕРАТОР: Плот по течению
+BaseGenerators.waterFloating = function(opts) {
+  let distance, riverSpeed, ans;
+  distance = randByDifficulty(opts, { easy: [10, 30], mid: [20, 50], hard: [40, 80] });
+  riverSpeed = randByDifficulty(opts, { easy: [2, 4], mid: [3, 6], hard: [5, 8] });
+  ans = distance / riverSpeed;
+  ans = Math.round(ans * 10) / 10;
+
+  return {
+    title: 'Плот по течению',
+    text: `
+Плот плывет по реке, скорость течения которой ${riverSpeed} км/ч.
+
+Какое время (в часах) потребуется плоту, чтобы проплыть ${distance} ${kmText(distance)}?
+`.trim(),
+    ans: ans,
+    steps: [
+      { h: 'Скорость плота', m: `Плот движется со скоростью течения, так как не имеет собственной скорости. v = ${riverSpeed} км/ч` },
+      { h: 'Время движения', m: `t = S / v = ${distance} / ${riverSpeed} = ${ans} ч` },
+      { h: 'Ответ', m: `Ответ: ${ans} ч` }
+    ]
+  };
+};
+
+    // --- Работа ---
+    BaseGenerators.worktwo = function(opts) {
+      let t1, t2, ans;
+      let attempts = 0;
+      do {
+        t1 = rand(6, 20);
+        t2 = rand(6, 20);
+        if (t1 === t2) continue;
+        ans = t1 * t2 / (t1 + t2);
+        attempts++;
+      } while ((ans <= 0.5 || ans > 30) && attempts < 100);
+      ans = Math.round(ans * 10) / 10;
+
+      return {
+        title: 'Два мастера',
+        text: `Первый рабочий может выполнить заказ за ${t1} ${dayText(t1)}, а второй — за ${t2} ${dayText(t2)}. За сколько дней они выполнят заказ, работая вместе? Ответ дайте с точностью до десятых.`.trim(),
+        ans,
+        steps: [
+          {
+            h: 'Шаг 1. Производительности рабочих',
+            m: `
+Первый: t₁ = ${t1} ${dayText(t1)}, p₁ = 1/${t1}.<br>
+Второй: t₂ = ${t2} ${dayText(t2)}, p₂ = 1/${t2}.
+            `.trim()
+          },
+          {
+            h: 'Шаг 2. Общая производительность',
+            m: `
+p<sub>общ</sub> = 1/${t1} + 1/${t2}.<br>
+Численно: p<sub>общ</sub> ≈ ${(1/t1).toFixed(3)} + ${(1/t2).toFixed(3)} = ${(1/t1 + 1/t2).toFixed(3)}.
+            `.trim()
+          },
+          {
+            h: 'Шаг 3. Время совместной работы',
+            m: `
+t = 1 / p<sub>общ</sub> ≈ 1 / ${(1/t1 + 1/t2).toFixed(3)} ≈ <b>${ans}</b> ${dayText(ans)}.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    BaseGenerators.workthree = function(opts) {
+      let t1, t2, t3, ans;
+      let attempts = 0;
+
+      do {
+        t1 = rand(8, 16);
+        t2 = rand(10, 18);
+        t3 = rand(12, 20);
+        const p1 = 1 / t1;
+        const p2 = 1 / t2;
+        const p3 = 1 / t3;
+        const pTotal = p1 + p2 + p3;
+        ans = 1 / pTotal;
+        attempts++;
+      } while ((ans <= 1 || ans >= 10) && attempts < 100);
+
+      ans = Math.round(ans * 10) / 10;
+
+      const title = "Работа втроём";
+      const text = `Трое рабочих могут выполнить работу за ${t1}, ${t2} и ${t3} ${dayText(t3)} соответственно, работая поодиночке. За сколько ${dayText(ans)} они выполнят эту работу, если будут работать вместе?`.trim();
+
+      const p1 = 1 / t1;
+      const p2 = 1 / t2;
+      const p3 = 1 / t3;
+      const pTotal = p1 + p2 + p3;
+
+      return {
+        title,
+        text,
+        ans,
+        steps: [
+          {
+            h: "Шаг 1. Таблица производительности",
+            m: `
+<div class="data-table">
+  <table>
+    <tr>
+      <th>Рабочий</th>
+      <th>Время на всю работу</th>
+      <th>Производительность</th>
+    </tr>
+    <tr>
+      <td>Первый</td>
+      <td>${t1}</td>
+      <td>1/${t1}</td>
+    </tr>
+    <tr>
+      <td>Второй</td>
+      <td>${t2}</td>
+      <td>1/${t2}</td>
+    </tr>
+    <tr>
+      <td>Третий</td>
+      <td>${t3}</td>
+      <td>1/${t3}</td>
+    </tr>
+  </table>
+</div>
+<b>Производительность</b> — часть работы, выполняемая за 1 день: 1/t.
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Найдём общую производительность",
+            m: `
+При совместной работе производительности складываются:<br>
+p<sub>общ</sub> = 1/${t1} + 1/${t2} + 1/${t3} ≈ ${pTotal.toFixed(3)} (долей работы в день).
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Выразим время совместной работы",
+            m: `
+Время выполнения всей работы:<br>
+t = 1 / p<sub>общ</sub> ≈ 1 / ${pTotal.toFixed(3)} ≈ <b>${ans}</b> ${dayText(ans)}.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    BaseGenerators.workpipes = function(opts) {
+      let tfill, tdrain, ans;
+      let attempts = 0;
+      do {
+        tfill = rand(4, 12);
+        tdrain = rand(8, 20);
+        if (tdrain <= tfill) continue;
+        ans = tfill * tdrain / (tdrain - tfill);
+        attempts++;
+      } while ((ans <= 0.5 || ans > 50) && attempts < 100);
+      ans = Math.round(ans * 10) / 10;
+
+      return {
+        title: 'Бассейн и трубы',
+        text: `
+          Первая труба может заполнить бассейн за ${tfill} ${hourText(tfill)},
+          а вторая труба, открытая на слив, опорожняет его за ${tdrain} ${hourText(tdrain)}.
+          За сколько часов наполнится бассейн, если открыть обе трубы одновременно?
+          Ответ дайте с точностью до десятых.
+        `,
+        ans,
+        steps: [
+          { h: 'Производительность труб', m: 'Первая даёт +1/' + tfill + ', вторая −1/' + tdrain + ' бассейна в час.' },
+          { h: 'Суммарная производительность', m: '1/T = 1/' + tfill + ' − 1/' + tdrain + '.' },
+          { h: 'Время наполнения', m: 'Найди T и округли ответ.' }
+        ]
+      };
+    };
+
+    BaseGenerators.workDelay = function(opts) {
+      let t1, t2, delay, ans;
+      let attempts = 0;
+
+      do {
+        t1 = rand(8, 20);      // время первого в одиночку
+        t2 = rand(8, 20);      // время второго в одиночку
+        delay = rand(1, 3);    // задержка в днях
+        if (t1 === t2) continue;
+
+        const p1 = 1 / t1;
+        const p2 = 1 / t2;
+
+        // первый один работает delay дней
+        const workAlone = p1 * delay;
+        const workRemaining = 1 - workAlone;
+        const timeTogether = workRemaining / (p1 + p2);
+
+        ans = delay + timeTogether;
+        attempts++;
+      } while ((ans <= delay || ans >= 20) && attempts < 100);
+
+      ans = Math.round(ans * 10) / 10;
+
+      const title = "Работа с опозданием второго рабочего";
+      const text = `Первый рабочий может выполнить задание за ${t1} ${dayText(t1)}, второй — за ${t2} ${dayText(t2)}. Первый начал работать один и проработал ${delay} ${dayText(delay)}, после чего к нему присоединился второй. Через сколько дней с начала работы задание будет выполнено?`.trim();
+
+      const p1 = 1 / t1;
+      const p2 = 1 / t2;
+      const workAlone = p1 * delay;
+      const workRemaining = 1 - workAlone;
+      const timeTogether = workRemaining / (p1 + p2);
+
+      return {
+        title,
+        text,
+        ans,
+        steps: [
+          {
+            h: "Шаг 1. Сколько работы сделал первый один",
+            m: `
+Производительность первого: p₁ = 1/${t1}.<br>
+За ${delay} ${dayText(delay)} он выполнит:<br>
+W₁ = p₁·${delay} = ${delay}/${t1} ≈ ${workAlone.toFixed(3)} доли работы.
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Сколько работы осталось",
+            m: `
+Осталось выполнить:<br>
+W<sub>ост</sub> = 1 − W₁ ≈ 1 − ${workAlone.toFixed(3)} = ${workRemaining.toFixed(3)}.
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Работа вдвоём",
+            m: `
+Когда второй подключился, они работают вдвоём с общей производительностью:<br>
+p<sub>общ</sub> = 1/${t1} + 1/${t2} ≈ ${(p1 + p2).toFixed(3)}.<br>
+Время на оставшуюся часть работы:<br>
+t<sub>вместе</sub> = W<sub>ост</sub> / p<sub>общ</sub> ≈ ${timeTogether.toFixed(2)} ${dayText(timeTogether)}.
+            `.trim()
+          },
+          {
+            h: "Шаг 4. Полное время работы",
+            m: `
+Полное время работы с учётом первых ${delay} ${dayText(delay)}:<br>
+T = ${delay} + t<sub>вместе</sub> ≈ ${delay} + ${timeTogether.toFixed(2)} ≈ <b>${ans}</b> ${dayText(ans)}.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    // Новый контекст: ремонт комнаты
+    BaseGenerators.workrepair = function(opts){
+  const a = randByDifficulty(opts,{easy:[3,5],mid:[4,6],hard:[5,8]});   // м², сделает 1-й за tA
+  const b = randByDifficulty(opts,{easy:[4,6],mid:[5,7],hard:[6,9]});   // м², сделает 2-й за tB
+  const tA = randByDifficulty(opts,{easy:[8,15],mid:[10,20],hard:[12,25]});
+  const tB = randByDifficulty(opts,{easy:[10,18],mid:[12,22],hard:[15,28]});
+
+  const p1 = a/tA;
+  const p2 = b/tB;
+  const S = a*b;                 // условная общая площадь (как в прототипе)
+  const ans = Math.round((S)/(p1+p2)*10)/10;
+
+  return {
+    title:'Производительность (ремонт)',
+    text: `
+Первый рабочий может отремонтировать ${a} м² за ${tA} ${hourText(tA)},
+а второй — ${b} м² за ${tB} ${hourText(tB)}.
+С какой скоростью работают они вместе и сколько времени потребуется, чтобы отремонтировать ${S} м²?
+
+Ответ дайте в часах.
+`.trim(),
+    ans,
+    steps:[
+      {h:'Скорости работы', m:`p₁ = ${a}/${tA} = ${p1.toFixed(2)} м²/ч, p₂ = ${b}/${tB} = ${p2.toFixed(2)} м²/ч.`},
+      {h:'Суммарная скорость', m:`p = p₁ + p₂ = ${(p1+p2).toFixed(2)} м²/ч.`},
+      {h:'Время', m:`t = S/p = ${S}/${(p1+p2).toFixed(2)} = ${ans} ч.`},
+      {h:'Ответ', m:`Ответ: ${ans}`}
+    ]
+  };
+};
+
+// НОВЫЙ ГЕНЕРАТОР: Уборка дома
+BaseGenerators.workCleaning = function(opts) {
+  let t1, t2, delay, ans;
+  t1 = randByDifficulty(opts, { easy: [6, 10], mid: [8, 12], hard: [10, 15] });
+  t2 = t1 + randByDifficulty(opts, { easy: [2, 4], mid: [3, 6], hard: [5, 8] });
+  delay = randByDifficulty(opts, { easy: [1, 2], mid: [2, 3], hard: [3, 4] });
+
+  const p1 = 1 / t1;
+  const p2 = 1 / t2;
+  const workDoneAlone = p1 * delay;
+  const workRemaining = 1 - workDoneAlone;
+  const timeTogether = workRemaining / (p1 + p2);
+  ans = delay + timeTogether;
+  ans = Math.round(ans * 10) / 10;
+
+  return {
+    title: 'Уборка дома',
+    text: `
+Первая уборщица может убрать дом за ${t1} ${hourText(t1)}, вторая — за ${t2} ${hourText(t2)}. Первая уборщица начала работу, а через ${delay} ${hourText(delay)} к ней присоединилась вторая.
+
+За сколько часов будет убран дом?
+`.trim(),
+    ans: ans,
+    steps: [
+      { h: 'Производительности', m: `p₁ = 1/${t1}, p₂ = 1/${t2}` },
+      { h: `Работа первой за ${delay} ч`, m: `A₁ = p₁ × ${delay} = 1/${t1} × ${delay} = ${(delay/t1).toFixed(2)}` },
+      { h: 'Оставшаяся работа', m: `A_ост = 1 - ${(delay/t1).toFixed(2)} = ${(1 - delay/t1).toFixed(2)}` },
+      { h: 'Совместная производительность', m: `p = p₁ + p₂ = 1/${t1} + 1/${t2} = ${(1/t1 + 1/t2).toFixed(4)}` },
+      { h: 'Время на оставшуюся работу', m: `t_ост = A_ост / p = ${(1 - delay/t1).toFixed(2)} / ${(1/t1 + 1/t2).toFixed(4)} = ${timeTogether.toFixed(2)} ч` },
+      { h: 'Общее время', m: `T = ${delay} + ${timeTogether.toFixed(2)} = ${ans} ч` },
+      { h: 'Ответ', m: `Ответ: ${ans} ч` }
+    ]
+  };
+};
+
+    BaseGenerators.prog = function(opts) {
+      let a1, d, n, an, sum;
+      let attempts = 0;
+
+      do {
+        a1 = rand(5, 20);      // первый член
+        d  = rand(3, 10);      // разность
+        n  = rand(4, 8);       // число членов
+        an = a1 + (n - 1) * d;
+        sum = (a1 + an) * n / 2;
+        attempts++;
+      } while ((sum <= 1 || sum >= 1000) && attempts < 50);
+
+      sum = Math.round(sum);
+
+      const title = "Арифметическая прогрессия: сумма первых n членов";
+      const text = `Дана арифметическая прогрессия. Первый член равен ${a1}, разность прогрессии равна ${d}. Найдите сумму первых ${n} членов этой прогрессии.`.trim();
+
+      return {
+        title,
+        text,
+        ans: sum,
+        steps: [
+          {
+            h: "Шаг 1. Вспоминаем формулы арифметической прогрессии",
+            m: `
+<b>Основные формулы:</b><br>
+1) n‑й член: a<sub>n</sub> = a<sub>1</sub> + (n − 1)·d.<br>
+2) Сумма n первых членов: S<sub>n</sub> = (a<sub>1</sub> + a<sub>n</sub>)·n / 2.
+            `.trim()
+          },
+          {
+            h: "Шаг 2. Находим n‑й член прогрессии",
+            m: `
+Подставляем числа в формулу a<sub>n</sub> = a<sub>1</sub> + (n − 1)·d:<br>
+a<sub>${n}</sub> = ${a1} + (${n} − 1)·${d} = ${a1} + ${(n - 1)}·${d} = <b>${an}</b>.
+            `.trim()
+          },
+          {
+            h: "Шаг 3. Записываем формулу для суммы",
+            m: `
+Теперь используем формулу суммы:<br>
+S<sub>${n}</sub> = (a<sub>1</sub> + a<sub>${n}</sub>)·${n} / 2 = (${a1} + ${an})·${n} / 2.
+            `.trim()
+          },
+          {
+            h: "Шаг 4. Подставляем и считаем",
+            m: `
+S<sub>${n}</sub> = (${a1} + ${an})·${n} / 2 = (${a1 + an}·${n}) / 2 = <b>${sum}</b>.
+            `.trim()
+          }
+        ]
+      };
+    };
+
+    // Новый контекст: печенье по дням
+    BaseGenerators.progberries = function(opts) {
+      let a1, d, n, an, sum;
+      let attempts = 0;
+      do {
+        a1 = rand(3, 15);
+        d  = rand(1, 5);
+        n  = rand(4, 8);
+        an = a1 + (n - 1) * d;
+        sum = (a1 + an) * n / 2;
+        attempts++;
+      } while ((sum <= 0 || sum > 500) && attempts < 50);
+
+      return {
+        title: 'Печенье по дням',
+        text: `
+          В первый день Петя съел ${a1} печенья.
+          Каждый следующий день он съедал на ${d} печенья больше, чем в предыдущий.
+          Сколько печенья он съест за первые ${n} ${dayText(n)}?
+        `,
+        ans: sum,
+        steps: [
+          { h: 'Прогрессия', m: `Это арифметическая прогрессия: a₁ = ${a1}, d = ${d}, n = ${n}.` },
+          { h: 'Последний день', m: 'Найди aₙ: aₙ = a₁ + (n − 1)·d.' },
+          { h: 'Сумма', m: 'Используй формулу суммы: Sₙ = (a₁ + aₙ)·n / 2.' }
+        ]
+      };
+    };
+
+    // Новый контекст: оплата курса
+    BaseGenerators.progpayments = function(opts) {
+      let a1, d, n, an, sum;
+      let attempts = 0;
+      do {
+        a1 = rand(500, 2000);
+        d  = rand(100, 500);
+        n  = rand(4, 8);
+        an = a1 + (n - 1) * d;
+        sum = (a1 + an) * n / 2;
+        attempts++;
+      } while ((sum <= 0 || sum > 200000) && attempts < 50);
+
+      return {
+        title: 'Оплата курса',
+        text: `
+          В первый месяц ученик заплатил за занятия ${a1} рублей.
+          Каждый следующий месяц плата увеличивалась на ${d} рублей.
+          Сколько рублей он заплатит за первые ${n} ${monthText(n)}?
+        `,
+        ans: sum,
+        steps: [
+          { h: 'Прогрессия', m: 'Платежи образуют арифметическую прогрессию.' },
+          { h: 'Последний платёж', m: 'Найди aₙ по формуле aₙ = a₁ + (n − 1)·d.' },
+          { h: 'Сумма платежей', m: 'Используй формулу Sₙ = (a₁ + aₙ)·n / 2.' }
+        ]
+      };
+    };
+
+// НОВЫЙ ГЕНЕРАТОР: Вклад под проценты
+BaseGenerators.progDeposit = function(opts) {
+  let initial, percent, n, ans;
+  let attempts = 0;
+
+  do {
+    initial = rand(20000, 80000);       // начальная сумма
+    percent = rand(5, 20);              // ставка
+    n = rand(3, 7);                     // число лет
+    const q = 1 + percent / 100;
+    ans = initial * Math.pow(q, n);
+    attempts++;
+  } while ((ans <= 0 || ans >= 500000) && attempts < 100);
+
+  ans = Math.round(ans);
+
+  const title = "Вклад с ежегодным начислением процентов";
+  const text = `Клиент положил в банк ${initial} ${rubleText(initial)} под ${percent}% годовых. Проценты ежегодно прибавляются к сумме вклада. Сколько будет на счёте через ${n} ${n === 1 ? 'год' : n < 5 ? 'года' : 'лет'}?`.trim();
+
+  const q = 1 + percent / 100;
+
+  return {
+    title,
+    text,
+    ans,
+    steps: [
+      {
+        h: "Шаг 1. Формула сложных процентов",
+        m: `
+Каждый год сумма умножается на коэффициент <b>q = 1 + p/100</b>.<br>
+Через n лет: <b>S<sub>n</sub> = S₀·qⁿ</b>, где S₀ — начальная сумма, q — коэффициент роста.
+        `.trim()
+      },
+      {
+        h: "Шаг 2. Подставляем p в q",
+        m: `
+p = ${percent}%, значит<br>
+q = 1 + ${percent}/100 = ${q.toFixed(2)}.
+        `.trim()
+      },
+      {
+        h: "Шаг 3. Записываем выражение для суммы через ${n} лет",
+        m: `
+S<sub>${n}</sub> = ${initial} · ${q.toFixed(2)}<sup>${n}</sup>.
+        `.trim()
+      },
+      {
+        h: "Шаг 4. Считаем итоговую сумму",
+        m: `
+При вычислении получаем приблизительно:<br>
+S<sub>${n}</sub> ≈ <b>${ans}</b> ${rubleText(ans)}.
+        `.trim()
+      }
+    ]
+  };
+};
+
+    // Список тем
+    const fipi = [
+  { k: 'mix',    t: 'Смеси и растворы' },
+  { k: 'line',   t: 'Движение по прямой' },
+  { k: 'circle', t: 'Движение по кругу' },
+  { k: 'water',  t: 'Движение по реке' },
+  { k: 'work',   t: 'Работа и производительность' },
+  { k: 'prog',   t: 'Прогрессии' }
+];
+
+// Подтемы (id должен совпадать с BaseGenerators.<id>)
+const SUBTYPES = {
+  mix: [
+    { id: 'mixconcentration', label: 'Смесь: найти концентрацию' },
+    { id: 'mixmass',          label: 'Разбавление: найти объём' },
+    { id: 'mixEvaporation',   label: 'Выпаривание' },
+    { id: 'percentSimple',    label: 'Проценты: +/− p%' },
+    { id: 'percentMultiple',  label: 'Проценты: два изменения' },
+    { id: 'percentDiscount',  label: 'Проценты: скидка' },
+    { id: 'mixCoffee',        label: 'Смешивание кофе' }
+  ],
+  line: [
+    { id: 'linetime',   label: 'Встреча (v1+v2)' },
+    { id: 'lineparts',  label: 'Догонялки (|v1−v2|)' },
+    { id: 'linethirds', label: 'Средняя скорость (3 участка)' },
+    { id: 'linecity',   label: 'Пешком + автобус' },
+    { id: 'lineBus',    label: 'Автобус с остановками' }
+  ],
+  circle: [
+    { id: 'circle', label: 'Встреча на круге' },
+    { id: 'circleStadium', label: 'Бег по стадиону' }
+  ],
+  water: [
+    { id: 'watersimple', label: 'Туда-обратно по реке' },
+    { id: 'waterstop',   label: 'Туда-обрано + остановка' },
+    { id: 'waterFloating', label: 'Плот по течению' }
+  ],
+  work: [
+    { id: 'worktwo',    label: 'Два исполнителя' },
+    { id: 'workthree',  label: 'Три исполнителя' },
+    { id: 'workpipes',  label: 'Трубы (плюс/минус)' },
+    { id: 'workDelay',  label: 'С опозданием' },
+    { id: 'workrepair', label: 'Ремонт комнаты' },
+    { id: 'workCleaning', label: 'Уборка дома' }
+  ],
+  prog: [
+    { id: 'prog',         label: 'Сумма прогрессии' },
+    { id: 'progberries',  label: 'Рост по дням' },
+    { id: 'progpayments', label: 'Платежи по месяцам' },
+    { id: 'progDeposit',  label: 'Вклад под проценты' }
+  ]
+};
+
+function pickFromTheme(k){return(SUBTYPES[k]||[]).map(x=>x.id);}
+
+// БАГ #5: Улучшенная функция генерации с защитой от зацикливания
+function generateBySubtypeOrRandom(key, opts){
+  const subtype = opts?.subtype || '';
+  const difficulty = opts?.difficulty || 'mid';
+  let t = null;
+  let tries = 0;
+  const maxAttempts = 100;
+
+  const failTask = () => ({
+    title: 'Ошибка генерации',
+    text: 'Не удалось сгенерировать корректную задачу. Попробуйте изменить настройки сложности или подтемы.',
+    ans: 0,
+    steps: [
+      { h: 'Ошибка', m: 'Не удалось сгенерировать задачу за разумное число попыток.' },
+      { h: 'Решение', m: 'Попробуйте выбрать другую подтему или изменить сложность.' },
+      { h: 'Ответ', m: 'Ответ: 0' }
+    ],
+    _generationError: true
+  });
+
+  const tryBuild = (genId) => {
+    tries = 0;
+    t = null;
+    while (tries < maxAttempts && !isGoodTask(t)) {
+      t = ensureAnswerStep(BaseGenerators[genId](opts));
+      tries++;
+    }
+    
+    // Fallback: если не удалось сгенерировать "красивую" задачу
+    if (!isGoodTask(t)) {
+      console.warn(`Не удалось сгенерировать красивую задачу за ${maxAttempts} попыток`);
+      t = ensureAnswerStep(BaseGenerators[genId](opts));
+      if (t && typeof t.ans === 'number' && isFinite(t.ans)) {
+        // Округляем ответ для fallback
+        t.ans = Math.round(t.ans * 100) / 100;
+      }
+    }
+    
+    return t;
+  };
+
+  if (subtype && BaseGenerators[subtype]) {
+    const task = tryBuild(subtype);
+    return task ? { ...task, subtype, difficulty } : failTask();
+  }
+
+  const pool = pickFromTheme(key);
+  if (pool.length === 0) return failTask();
+  
+  const chosen = pick(pool);
+  const task = tryBuild(chosen);
+  return task ? { ...task, subtype: chosen, difficulty } : failTask();
+}
+
+const Generators = {
+  mix: (o) => generateBySubtypeOrRandom('mix', o),
+  line: (o) => generateBySubtypeOrRandom('line', o),
+  circle: (o) => generateBySubtypeOrRandom('circle', o),
+  water: (o) => generateBySubtypeOrRandom('water', o),
+  work: (o) => generateBySubtypeOrRandom('work', o),
+  prog: (o) => generateBySubtypeOrRandom('prog', o)
+};
+
+    // Состояние с исправленными багами
+    let state = {
+      ok: 0,
+      err: 0,
+      task: null,
+      stepIdx: 0,
+      currentKey: 'mix',
+      topicStats: {},
+      shownHints: { theory: false, smart: false, extended: false }, // БАГ #7: Добавлено поле
+
+      mode: 'train',
+      batch: [],
+      settings: { difficulty: 'mid', subtype: '' }
+    };
+
+    // Чат
+    function addBubble(html, role) {
+      const chat = document.getElementById('chat');
+      const div = document.createElement('div');
+      div.className = 'msg ' + role;
+      div.innerHTML = `<div class="bubble">${html}</div>`;
+      chat.appendChild(div);
+
+      // сворачивание старых подсказок
+      const hints = chat.querySelectorAll('.hint-card');
+      hints.forEach((h, i) => {
+        if (i < hints.length - 1) {
+          h.classList.add('compact');
+          h.onclick = () => h.classList.toggle('compact');
+        }
+      });
+
+      setTimeout(() => {
+        chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+      }, 100);
+
+      if (window.MathJax) {
+        MathJax.typesetPromise([div]).catch((err) => console.log(err));
+      }
+    }
+
+    // БАГ #6: Обновленные функции работы с localStorage
+    function loadStats() {
+      const saved = safeLocalStorageGet('ege20stats'); // ИСПРАВЛЕНО
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          state.ok = data.ok || 0;
+          state.err = data.err || 0;
+          state.topicStats = data.topicStats || {};
+        } catch (e) {
+          console.error('Ошибка парсинга статистики:', e);
+          state.ok = 0;
+          state.err = 0;
+          state.topicStats = {};
+        }
+      }
+      updateStatsDisplay();
+      updateTopicBadges();
+    }
+
+    function updateStatsDisplay() {
+      const panel = document.getElementById('stats-panel');
+      if (!panel) return;
+      
+      const successSpan = panel.querySelector('.stats-success');
+      const errorSpan = panel.querySelector('.stats-error');
+      
+      if (successSpan) successSpan.textContent = state.ok || 0;
+      if (errorSpan) errorSpan.textContent = state.err || 0;
+    }
+
+    function updateTopicBadges() {
+      // Обновление бейджей точности для каждой темы в боковой панели
+      document.querySelectorAll('.nav-item').forEach(item => {
+        const key = item.dataset.key;
+        if (!key) return;
+        
+        const stats = state.topicStats[key];
+        if (!stats || (stats.ok + stats.err) === 0) {
+          // Убираем бейдж если нет статистики
+          const oldBadge = item.querySelector('.accuracy-badge');
+          if (oldBadge) oldBadge.remove();
+          return;
+        }
+        
+        const total = stats.ok + stats.err;
+        const accuracy = Math.round((stats.ok / total) * 100);
+        
+        let oldBadge = item.querySelector('.accuracy-badge');
+        if (!oldBadge) {
+          oldBadge = document.createElement('span');
+          oldBadge.className = 'accuracy-badge';
+          item.appendChild(oldBadge);
+        }
+        
+        oldBadge.textContent = accuracy + '%';
+        oldBadge.className = 'accuracy-badge';
+        
+        if (accuracy >= 80) {
+          oldBadge.classList.add('high');
+        } else if (accuracy >= 50) {
+          oldBadge.classList.add('medium');
+        } else {
+          oldBadge.classList.add('low');
+        }
+      });
+    }
+
+    function saveStats() {
+      safeLocalStorageSet( // ИСПРАВЛЕНО
+        'ege20stats',
+        JSON.stringify({
+          ok: state.ok,
+          err: state.err,
+          topicStats: state.topicStats
+        })
+      );
+      updateStatsDisplay();
+      updateTopicBadges();
+    }
+
+    function resetStats() {
+      if (!confirm('Сбросить всю статистику?')) return;
+      state.ok = 0;
+      state.err = 0;
+      state.topicStats = {};
+      safeLocalStorageRemove('ege20stats'); // ИСПРАВЛЕНО
+      updateStatsDisplay();
+      updateTopicBadges();
+      addBubble('Статистика сброшена. Можно начинать заново! 🎯', 'ai');
+    }
+
+    function applySettingsFromUI(){
+      if(!state.settings) state.settings = {difficulty:'mid', subtype:''};
+      const dEl = document.getElementById('difficultySelect');
+      const sEl = document.getElementById('subtypeSelect');
+      if(dEl) state.settings.difficulty = dEl.value || 'mid';
+      if(sEl) state.settings.subtype = sEl.value || '';
+      safeLocalStorageSet('ege20settings', JSON.stringify(state.settings)); // ИСПРАВЛЕНО
+    }
+
+    function refreshSubtypeOptions(){
+      const select = document.getElementById('subtypeSelect');
+      if(!select) return;
+      if(!state.settings) state.settings = {difficulty:'mid', subtype:''};
+      const key = state.currentKey || 'mix';
+      const options = SUBTYPES[key] || [];
+      const ok = options.some(o => o.id === state.settings.subtype);
+      if(!ok) state.settings.subtype = '';
+      const current = state.settings.subtype || '';
+      select.innerHTML = 
+        '<option value="" ' + (current === '' ? 'selected' : '') + '>Случайно</option>' +
+        options.map(o => 
+          '<option value="' + o.id + '" ' + (o.id === current ? 'selected' : '') + '>' + 
+          o.label + '</option>'
+        ).join('');
+    }
+
+    // Функция включения/выключения ввода ответа в зависимости от режима
+    function toggleInputByMode() {
+      const inp = document.getElementById("inp");
+      const sendBtn = document.querySelector(".btn.btn-p"); // кнопка "Отправить"
+      const helpButtons = document.getElementById("help-buttons");
+      const revealBtn = document.getElementById("reveal-btn");
+      const hintBtn = document.getElementById("hint-btn");
+      const choiceArea = document.getElementById("choice-area");
+      
+      if (!inp || !sendBtn) return;
+      
+      if (state.mode === "batch") {
+        // В режиме набора задач ввод ответа недоступен
+        inp.disabled = true;
+        inp.placeholder = "В режиме набора задач ответы не вводятся";
+        sendBtn.disabled = true;
+        
+        if (helpButtons) helpButtons.style.display = "none";
+        if (revealBtn) revealBtn.style.display = "none";
+        if (hintBtn) hintBtn.style.display = "none";
+        if (choiceArea) choiceArea.style.display = "none";
+      } else {
+        // В режиме тренировки ввод доступен
+        inp.disabled = false;
+        inp.placeholder = "12, 3.5 или 1/2";
+        sendBtn.disabled = false;
+        
+        // Кнопки помощи будут показаны при необходимости в newTask/sendAnswer
+        // Здесь не показываем их автоматически
+      }
+    }
+
+    function setMode(mode){
+      state.mode = mode;
+      toggleInputByMode(); // Включаем/выключаем ввод в зависимости от режима
+      
+      const controls = document.querySelector('.controls');
+      const choiceArea = document.getElementById('choice-area');
+      const inputBar = controls ? controls.querySelector('.input-bar') : null;
+      
+      refreshSubtypeOptions();
+      
+      if(mode === 'batch'){
+        if(inputBar) inputBar.style.display = 'none';
+        if(choiceArea) choiceArea.style.display = 'none';
+        addBubble('<b>Режим "Набор задач"</b><br>Выбери тему, укажи количество и нажми "Сгенерировать".', 'ai');
+        return;
+      }
+      
+      // Режим тренировки
+      if(inputBar) inputBar.style.display = 'flex';
+      if(choiceArea){ choiceArea.style.display = 'none'; choiceArea.innerHTML = ''; }
+      addBubble('<b>Режим "Тренировка"</b><br>Выбери тему или нажми "Случайная задача".', 'ai');
+    }
+
+    function generateBatchFromUI(){
+      state.mode = "batch";
+      toggleInputByMode();
+
+      const nEl = document.getElementById('batchCount');
+      let n = parseInt(nEl ? nEl.value : '10', 10);
+      if(!Number.isFinite(n) || n < 1) n = 10;
+      if(n > 50) n = 50;
+      const key = state.currentKey || 'mix';
+      applySettingsFromUI();
+      state.batch = generateBatch(key, n, {...state.settings});
+      renderBatch(state.batch, key);
+    }
+
+    function generateBatch(key, n, opts){
+      const tasks = [];
+      const seen = new Set();
+      let guard = 0;
+      while(tasks.length < n && guard < n * 20){
+        guard++;
+        const t = Generators[key](opts);
+        const sig = key + '|' + (opts?.difficulty || 'mid') + '|' + (opts?.subtype || '') + '|' + 
+                   String(t.title || '') + '|' + String(t.text || '').replace(/\s+/g,' ').trim();
+        if(seen.has(sig)) continue;
+        seen.add(sig);
+        tasks.push({...t, _key: key, _idx: tasks.length + 1});
+      }
+      return tasks;
+    }
+
+    function renderBatch(tasks, key){
+      const chat = document.getElementById('chat');
+      if(!chat) return;
+      chat.innerHTML = '';
+      addBubble('<b>Генерирую набор задач…</b>', 'ai');
+      const title = (fipi.find(x => x.k === key) || {}).t || key;
+      const listHtml = tasks.map(t => {
+        const ans = (t.ans !== undefined) ? t.ans : '';
+        const steps = Array.isArray(t.steps) ? t.steps : [];
+        const stepsHtml = steps.length
+          ? '<ol style="margin:10px 0 0 18px;">' +
+            steps.map(s => 
+              '<li style="margin:6px 0;"><b>' + s.h + '</b><br>' + s.m + '</li>'
+            ).join('') + '</ol>'
+          : '<div style="margin-top:10px;color:#666;">Решение не задано.</div>';
+        
+        return '<div style="background:#fff;border:1px solid var(--y-border);border-radius:16px;padding:16px;margin:12px 0;">' +
+               '<div style="font-weight:800;margin-bottom:10px;">Задача ' + t._idx + '. ' + (t.title || '') + '</div>' +
+               '<div class="task-card" style="margin:0;">' + (t.text || '') + '</div>' +
+               '<details style="margin-top:10px;">' +
+               '<summary style="cursor:pointer;font-weight:700;color:var(--y-blue);">Показать ответ</summary>' +
+               '<div style="margin-top:10px;"><b>' + ans + '</b></div>' +
+               '</details>' +
+               '<details style="margin-top:10px;">' +
+               '<summary style="cursor:pointer;font-weight:700;color:var(--y-blue);">Показать решение</summary>' +
+               stepsHtml +
+               '</details>' +
+               '</div>';
+      }).join('');
+      
+      addBubble(
+        '<b>Набор задач: ' + title + '</b><br>' +
+        '<span style="color:#666;font-size:13px;">Сгенерировано: <b>' + tasks.length + '</b>.</span>' +
+        '<div style="margin-top:14px;">' + listHtml + '</div>',
+        'ai'
+      );
+    }
+
+    // Задачи с исправленным багом #7
+    function newTask(key) {
+      // Переключаемся в режим тренировки
+      state.mode = "train";
+      toggleInputByMode();
+
+      const type = key;
+      state.currentKey = type;
+      resetHintState(); // Сбрасываем состояние подсказок
+      applySettingsFromUI();
+      refreshSubtypeOptions();
+
+      // Генерируем новую задачу
+      state.task = Generators[type]({ ...(state.settings || {}) });
+      state.stepIdx = 0;
+
+      // Гарантируем, что задача корректна
+      let attempts = 0;
+      while (
+        (
+          !state.task ||
+          typeof state.task.ans === "undefined" ||
+          state.task.ans === null ||
+          state.task.title == null ||
+          state.task.text == null
+        ) &&
+        attempts < 5
+      ) {
+        console.error("Перегенерация некорректной задачи:", state.task);
+        state.task = Generators[type]({ ...(state.settings || {}) });
+        attempts++;
+      }
+
+      // Жёсткая нормализация ans
+      state.task.ans = Number(state.task.ans);
+      if (!isFinite(state.task.ans)) {
+        console.error("После перегенерации ans всё ещё некорректен, ставим 0:", state.task.ans);
+        state.task.ans = 0;
+      }
+
+      // Скрываем панель выбора похожей/новой задачи
+      const choiceArea = document.getElementById("choice-area");
+      if (choiceArea) {
+        choiceArea.style.display = "none";
+        choiceArea.innerHTML = "";
+      }
+
+      // Показываем задачу в чате
+      const title = getTopicTitle(type);
+      addBubble(
+        "<b>" + (state.task.title || title) + "</b>" +
+        "<div class=\"task-card\">" + state.task.text + "</div>",
+        "ai"
+      );
+
+      // Для режима тренировки показываем блок помощи
+      const helpBlock = document.getElementById("help-buttons");
+      if (helpBlock) {
+        helpBlock.style.display = "flex";
+      }
+
+      // Настраиваем кнопку подсказки
+      const hBtn = document.getElementById("hint-btn");
+      if (hBtn) {
+        if (state.task.steps && state.task.steps.length > 0) {
+          hBtn.style.display = "block";
+          hBtn.innerText = "1 / " + state.task.steps.length;
+        } else {
+          hBtn.style.display = "none";
+        }
+      }
+
+      // Очищаем поле ввода и ставим фокус
+      const inp = document.getElementById("inp");
+      if (inp) {
+        inp.value = "";
+        inp.focus();
+      }
+    }
+
+    // Панель выбора
+    function showChoicePanel() {
+      const choiceArea = document.getElementById('choice-area');
+      choiceArea.style.display = 'block';
+      choiceArea.innerHTML = `
+        <div class="choice-panel">
+          <div class="choice-btn similar"
+               onclick="newTask(state.currentKey)"
+               tabindex="0"
+               role="button"
+               aria-label="Похожая задача">
+            Ещё одна похожая задача
+          </div>
+          <div class="choice-btn next"
+               onclick="pickRandom()"
+               tabindex="0"
+               role="button"
+               aria-label="Случайная задача">
+            Случайная задача
+          </div>
+        </div>
+      `;
+    }
+
+    // Навигация по темам
+    function setupTopics() {
+      const list = document.getElementById('category-list');
+      fipi.forEach((c) => {
+        const d = document.createElement('div');
+        d.className = 'nav-item';
+        d.dataset.key = c.k; // Добавляем ключ для статистики
+        d.innerHTML = `<span>${c.t}</span>`;
+        d.onclick = () => {
+          document.querySelectorAll('.nav-item').forEach((e) => e.classList.remove('active'));
+          d.classList.add('active');
+          newTask(c.k);
+        };
+        d.setAttribute('tabindex', '0');
+        d.setAttribute('role', 'button');
+        d.setAttribute('aria-label', c.t);
+        d.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            d.click();
+          }
+        });
+        list.appendChild(d);
+      });
+    }
+
+    // Валидация ввода
+    function setupInputValidation() {
+      const inp = document.getElementById('inp');
+      inp.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        if (!val) {
+          inp.classList.remove('invalid', 'valid');
+          return;
+        }
+        const cleaned = cleanInput(val);
+        const num = parseFloat(cleaned);
+        if (isNaN(num)) {
+          inp.classList.add('invalid');
+          inp.classList.remove('valid');
+        } else {
+          inp.classList.remove('invalid');
+          inp.classList.add('valid');
+        }
+      });
+      inp.addEventListener('blur', () => {
+        inp.classList.remove('invalid', 'valid');
+      });
+    }
+
+    // Обработка Enter
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && document.activeElement.id === 'inp') {
+        e.preventDefault();
+        const inp = document.getElementById('inp');
+        const value = inp.value.trim();
+        if (!value) {
+          inp.classList.add('invalid');
+          setTimeout(() => inp.classList.remove('invalid'), 500);
+          return;
+        }
+        sendAnswer();
+      }
+    });
+
+    // Инициализация
+    window.addEventListener('load', () => {
+      // 1) Сайдбар + статистика
+      setupTopics();
+      loadStats();
+
+      // 2) Настройки (difficulty/subtype) из localStorage
+      const savedSettings = safeLocalStorageGet('ege20settings'); // ИСПРАВЛЕНО
+      if (savedSettings) {
+        try {
+          const s = JSON.parse(savedSettings);
+          if (!state.settings) state.settings = { difficulty: 'mid', subtype: '' };
+          if (['easy','mid','hard'].includes(s.difficulty)) state.settings.difficulty = s.difficulty;
+          if (typeof s.subtype === 'string') state.settings.subtype = s.subtype;
+        } catch (e) {}
+      }
+      const dEl = document.getElementById('difficultySelect');
+      if (dEl) dEl.value = (state.settings?.difficulty || 'mid');
+      refreshSubtypeOptions();
+      const sEl = document.getElementById('subtypeSelect');
+      if (sEl) sEl.value = (state.settings?.subtype || '');
+
+      // 3) Ввод/валидация
+      setupInputValidation();
+      
+      // 3.5) Установка режима по умолчанию (тренировка)
+      toggleInputByMode();
+
+      // 4) Стартовый "чатовый" сценарий + первая задача
+      addBubble(
+        `<div class="hint-card">
+          <div class="hint-head">Как работать с тренажёром</div>
+          <div class="hint-body">
+            <p><b>Режим тренировки.</b> Выберите тему слева или нажмите «Случайная задача». Тренажёр покажет одну задачу. Введите ответ внизу и отправьте. После ответа вы увидите, совпал ли результат, и при необходимости сможете открыть теорию, умную подсказку, пошаговое решение и ответ.</p>
+
+            <p><b>Режим набора задач.</b> Переключите режим на «Набор задач» и укажите, сколько задач нужно сгенерировать. Можно выбрать тему и уровень сложности. Тренажёр сформирует список задач: для каждой будет условие, правильный ответ и решение по шагам. Этот режим удобно использовать, когда нужна подборка задач для самостоятельной работы или раздаточных материалов.</p>
+
+            <p><b>Как вводить ответы.</b> Можно вводить целые числа, десятичные дроби (с точкой или запятой) и обыкновенные дроби вроде 1/2 или 3/4 — тренажёр автоматически преобразует их в число и сравнит с правильным ответом.</p>
+          </div>
+        </div>`,
+        'ai'
+      );
+
+      const firstKey = (fipi[0] || {k:'mix'}).k;
+      setActiveTopic(firstKey);
+      newTask(firstKey);
+    });
+  </script>
+</body>
+</html>
